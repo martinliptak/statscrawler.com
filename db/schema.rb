@@ -19,7 +19,8 @@ ActiveRecord::Schema.define(:version => 20110816182407) do
     t.datetime "analyzed_at"
   end
 
-  add_index "domains", ["location_id"], :name => "index_domains_on_domain_id"
+  add_index "domains", ["location_id"], :name => "index_domains_on_location_id"
+  add_index "domains", ["name"], :name => "index_domains_on_name", :unique => true
   add_index "domains", ["page_id"], :name => "index_domains_on_page_id"
 
   create_table "features", :force => true do |t|
@@ -53,11 +54,9 @@ ActiveRecord::Schema.define(:version => 20110816182407) do
   end
 
   create_table "sources", :force => true do |t|
-    t.integer  "page_id"
-    t.text     "headers"
-    t.text     "body"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer "page_id"
+    t.text    "headers"
+    t.text    "body"
   end
 
   add_index "sources", ["page_id"], :name => "index_sources_on_page_id"

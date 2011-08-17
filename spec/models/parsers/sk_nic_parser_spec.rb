@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe SkNicParser do
+describe Parsers::SkNicParser do
 
   it "should download and parse SK-NIC domain list" do
     gz = File.read(File.dirname(__FILE__) + '/../fixtures/sknic_1.txt.gz')
     FakeWeb.register_uri(:get, "https://www.sk-nic.sk/documents/domeny_1.txt.gz", :body => gz)
-    SkNicParser.perform
+    Parsers::SkNicParser.perform
     
     Domain.count.should == 62
     ListDomain.count.should == 62
@@ -24,13 +24,13 @@ describe SkNicParser do
   it "should destroy domains removed from list" do
     gz = File.read(File.dirname(__FILE__) + '/../fixtures/sknic_1.txt.gz')
     FakeWeb.register_uri(:get, "https://www.sk-nic.sk/documents/domeny_1.txt.gz", :body => gz)
-    SkNicParser.perform 
+    Parsers::SkNicParser.perform 
     Domain.count.should == 62
     last = Domain.last
     
     gz = File.read(File.dirname(__FILE__) + '/../fixtures/sknic_2.txt.gz')
     FakeWeb.register_uri(:get, "https://www.sk-nic.sk/documents/domeny_1.txt.gz", :body => gz)
-    SkNicParser.perform
+    Parsers::SkNicParser.perform
     
     Domain.count.should == 55
     ListDomain.count.should == 55
@@ -51,13 +51,13 @@ describe SkNicParser do
   it "should create domains added to list" do
     gz = File.read(File.dirname(__FILE__) + '/../fixtures/sknic_2.txt.gz')
     FakeWeb.register_uri(:get, "https://www.sk-nic.sk/documents/domeny_1.txt.gz", :body => gz)
-    SkNicParser.perform
+    Parsers::SkNicParser.perform
     Domain.count.should == 55
     last = Domain.last
   
     gz = File.read(File.dirname(__FILE__) + '/../fixtures/sknic_3.txt.gz')
     FakeWeb.register_uri(:get, "https://www.sk-nic.sk/documents/domeny_1.txt.gz", :body => gz)
-    SkNicParser.perform
+    Parsers::SkNicParser.perform
     
     Domain.count.should == 64
     first = Domain.first

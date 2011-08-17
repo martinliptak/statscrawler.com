@@ -32,6 +32,11 @@ Spork.prefork do
     # examples within a transaction, remove the following line or assign false
     # instead of true.
     config.use_transactional_fixtures = true
+    
+    config.before do
+      Resque.redis.flushall
+    end
+    FakeWeb.allow_net_connect = false
   end
 end
 
@@ -97,4 +102,9 @@ RSpec.configure do |config|
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
+  
+  config.before do
+    Resque.redis.flushall
+  end
+  FakeWeb.allow_net_connect = false
 end

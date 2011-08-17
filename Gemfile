@@ -6,7 +6,7 @@ gem 'rails', '3.1.0.rc5'
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2'
-
+gem 'resque'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -32,5 +32,6 @@ group :test do
   gem 'rspec-rails'
   gem 'spork', '0.9.0.rc9'
   gem 'fakeweb'
+  gem 'timecop'
 end
 

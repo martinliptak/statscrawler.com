@@ -8,6 +8,6 @@ class CreateDomains < ActiveRecord::Migration
     end
     add_index :domains, :name, :unique => true
     add_index :domains, :page_id
-    add_index :domains, :domain_id
+    add_index :domains, :location_id
   end
 end
