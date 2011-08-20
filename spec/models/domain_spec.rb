@@ -37,12 +37,4 @@ describe ListDomain do
       first.analyzed_at.should == Time.now.to_s
     }
   end
-  
-  it "should enqueue analyze job when created" do
-    first = Domain.create_from_list("list", "first").domain
-    
-    job = Resque.reserve(:high)
-    job.payload_class.should == Analyzers::Performer
-    job.args.first.should == first.id  
-  end
 end

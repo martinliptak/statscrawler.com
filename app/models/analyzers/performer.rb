@@ -9,9 +9,11 @@ module Analyzers
         open("http://www." + domain.name, :read_timeout => 10, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) { |file|
           domain.build_page unless domain.page
           page = domain.page
-          page.build_source unless page.source
-          page.source.headers = file.meta.to_yaml
-          page.source.body = file.read
+          unless Rails.env.production?
+            page.build_source unless page.source
+            page.source.headers = file.meta.to_yaml
+            page.source.body = file.read
+          end
         }
       }
     end
