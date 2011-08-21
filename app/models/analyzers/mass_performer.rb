@@ -44,7 +44,7 @@ module Analyzers
       Domain.where(:analyzed_at => nil).each_in_thread(100) { |id, domain|
         domain.analyze { |domain|
           begin
-            url, body, meta, cached = download(domain)
+            url, body, headers, cached = download(domain)
 
             page_mutex.synchronize {
               unless pages[url]
@@ -62,9 +62,20 @@ module Analyzers
               domain.page_id = pages[url]
             else
               unless Rails.env.production? or cached
-                domain.page.build_source
-                domain.page.source.headers = meta.to_yaml
+                domain.page.build_source unless domain.page.source
+                domain.page.source.headers = headers.to_yaml
                 domain.page.source.body = body
+              end
+
+              analyzer = Analyzer.new(headers, body)
+              result = analyzer.run
+              domain.page.server = result[:server]
+              domain.page.engine = result[:engine]
+              domain.page.doctype = result[:doctype]
+              domain.page.framework = result[:framework]
+              domain.page.features.clear
+              for feature in result[:features]
+                domain.page.features.build :name => feature
               end
 
               domain.page.save
@@ -87,18 +98,18 @@ module Analyzers
     def self.download(domain)
       if not Rails.env.production? and domain.page_id and domain.page.source
         url = domain.page.url
-        meta = YAML::load(domain.page.source.meta)
+        headers = YAML::load(domain.page.source.headers)
         body = domain.page.source.body
 
-        [url, body, meta, true]
+        [url, body, headers, true]
       else
         open("http://www." + domain.name,
                    :read_timeout => DOWNLOAD_TIMEOUT, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) { |file|
           url = file.base_uri.to_s
-          meta = file.meta
+          headers = file.meta
           body = file.read
 
-          return [url, body, meta, false]
+          return [url, body, headers, false]
         }
       end
     end

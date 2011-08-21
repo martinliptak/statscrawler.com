@@ -53,6 +53,8 @@ ActiveRecord::Schema.define(:version => 20110816182407) do
     t.string "framework"
   end
 
+  add_index "pages", ["url"], :name => "index_pages_on_url", :unique => true
+
   create_table "sources", :force => true do |t|
     t.integer "page_id"
     t.text    "headers"

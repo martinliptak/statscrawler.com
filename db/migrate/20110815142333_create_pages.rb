@@ -7,5 +7,7 @@ class CreatePages < ActiveRecord::Migration
       t.string :doctype
       t.string :framework
     end
+
+    add_index :pages, :url, :unique => true
   end
 end
