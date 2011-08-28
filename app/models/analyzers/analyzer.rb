@@ -42,7 +42,7 @@ module Analyzers
               engine :ruby
               framework :rails
             when "Chuck Norris!"
-              engine_final x_powered_by # chuck norris sa neprepisuje
+              engine_final x_powered_by # chuck norris is final
             else
               engine x_powered_by
           end
@@ -67,8 +67,18 @@ module Analyzers
         end
 
         # doctype
-        regexp /^\s*<!doctype\s*(html\s*public\s*".[^"]*"|html)/i do |match|
-          doctype match[1].delete("\n\r").strip.squeeze(" ").downcase
+        regexp /^\s*(<\?xml[^?]+\?>)?\s*<!doctype\s*(html\s*public\s*".[^"]*"|html)/i do |match|
+          doctype match[2].delete("\n\r").strip.squeeze(" ").downcase
+        end
+
+        # powered by opencart
+        regexp /<!--[^>]*Powered By OpenCart/ do
+          framework :opencart
+        end
+
+        # google adsense
+        regexp /<!--\s*google_ad_section_start/ do
+          feature :google_adsense
         end
 
         # scripts
@@ -80,10 +90,12 @@ module Analyzers
                 framework :joomla
               when "http://www.google-analytics.com/ga.js"
                 feature :google_analytics
-              when /^\/javascripts\/[^\/]*\.js\?\d{10}$/
-                framework :rails
-  #            when /fbcdn\.net\/connect\.php\/js\/FB/
-  #              extra :facebook_api
+              when %r{^(http://static\.ak\.fbcdn\.net|http://connect\.facebook\.net)}
+                feature :facebook
+              when %r{^http://\w{2,3}.search.etargetnet.com}
+                feature :etarget
+              when "http://pagead2.googlesyndication.com/pagead/show_ads.js"
+                feature :google_adsense
             end
 
             # filename
@@ -111,8 +123,14 @@ module Analyzers
           case script
             when /^.{0,30}jQuery\.extend\(Drupal\.settings/
               framework :drupal
+            when /jQuery/
+              feature :jquery
             when /['"]UA-[\d-]{5,}["']/
               feature :google_analytics
+            when %r{//connect\.facebook\.net}
+              feature :facebook
+            when %r{var\s*EtargetBannerIdent|http://\w{2,3}.search.etargetnet.com}
+              feature :etarget
           end
         end
 
@@ -121,17 +139,19 @@ module Analyzers
           attribute(style, "href") do |href|
             # full path
             case href
-              when /^\/stylesheets\/[^\/]*\.css\?\d{10}$/
-                framework :rails
+              when /modules\/node\/node\.css/
+                framework :drupal
+              when %r{/themes/[^/]+/css/global\.css}
+                framework :prestashop
+              when %r{^catalog/view/theme/[^/]+/stylesheet/stylesheet.css}
+                framework :opencart
             end
 
             # filename
             filename(href) do |filename|
               case filename
-                when /^(uc_product)/i
+                when /^uc_product/i
                   framework_final :ubercart
-                when /^node\.css/
-                  framework :drupal
               end
             end
 
@@ -139,52 +159,42 @@ module Analyzers
           end
         end
 
-        # inline styles
+         # inline styles
         element("style") do |style|
           case style
-            when /^@import "\/modules\/node\/node\.css";/
+            when /^@import "(\/modules\/node\/node\.css|\/misc\/drupal\.css)";/
               framework :drupal
            end
         end
 
         # images
         element("img") do |img|
-          resources << img if img
-        end
-
-        # anchors
-        element("a") do |a|
-          attribute(a, "href") do |href|
-            case href
-              #when /\/node\/\d*/
-              #  framework :drupal
-              #when /com_virtuemart/
-              #  framework_final :virtuemart
-              when /\.php$/
-                engine :php
-            end
+          attribute(img, 'src') do |src|
+            resources << src
           end
         end
 
         # iframe
-  #      element("iframe") do |iframe|
-  #        attribute(iframe, "src") do |src|
-  #          case src
-  #            when /^http:\/\/www.facebook.com/
-  #              extra :facebook_api
-  #          end
-  #        end
-  #      end
+        element("iframe") do |iframe|
+          attribute(iframe, "src") do |src|
+            case src
+              when /^http:\/\/www.facebook.com/
+                feature :facebook
+            end
+          end
+        end
 
         # image, stylesheet, script paths
         resources.each do |link|
           case link
-            when /^\/sites\/(default|all)\/(files|themes|modules)/
+            when /^\/sites\/[\w\d\-.]+\/(files|themes|modules)/
               framework :drupal
             when /\/(wp-includes\/js|wp-content\/(plugins|themes))\//
               framework :wordpress
             when /com_virtuemart/
               framework_final :virtuemart
+            when %r{^/(javascripts|stylesheets|images)/([^/]+/)*[^/]*\.\w{2,4}\?\d{10}$|^/assets/([^/+])*/[^/]*-[a-f0-9]{32}}
+              framework :rails
           end
         end
 
@@ -201,6 +211,8 @@ module Analyzers
               framework :drupal
             when /^shopping cart program by Zen Cart/
               framework :zencart
+            when /^prestashop/i
+              framework :prestashop
           end
         end
 
@@ -210,13 +222,13 @@ module Analyzers
         end
 
         # ubercart classes
-        element(".uc-price-product, .block-uc_cart") do
+        element(".uc-price, .uc-price-product, .block-uc_cart") do
           framework_final :ubercart
         end
 
         # framework implies engine
         engine :php if framework_in? [:joomla, :wordpress, :drupal, :typo3, :virtuemart, :nette, :ubercart,
-                                      :cakephp, :symfony, :zencart]
+                                      :cakephp, :symfony, :zencart, :prestashop, :opencart]
         engine :ruby if framework_in? [:rails]
       end
     end
