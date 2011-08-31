@@ -26,7 +26,7 @@ test:
   encoding: utf8
   reconnect: false
   database: statscrawler.com_test
-  pool: 5
+  pool: 110
   username: root
   password:
   socket: /var/run/mysqld/mysqld.sock
@@ -35,8 +35,8 @@ production:
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  database: statscrawler.com_production
-  pool: 5
+  database: statscrawler.com_development
+  pool: 110
   username: root
   password:
   socket: /var/run/mysqld/mysqld.sock

@@ -1,5 +1,9 @@
 require 'open-uri'
 
+require 'page.rb'
+require 'source.rb'
+require 'feature.rb'
+
 class ActiveRecord::Base
 
   def self.each_in_thread(thread_count)
@@ -34,14 +38,14 @@ module Analyzers
 
     @queue = 'high'
     
-    def self.perform
+    def self.perform(use_threads = true)
       mask_errors = ["OpenURI::HTTPError", "Timeout::Error", "RuntimeError", "SocketError",
                      "Errno::EHOSTUNREACH", "Errno::ECONNRESET", "Errno::ECONNREFUSED", "Errno::ETIMEDOUT",
                      "EOFError"]
       page_mutex = Mutex.new
       pages = {}
 
-      Domain.where(:analyzed_at => nil).each_in_thread(100) { |id, domain|
+      Domain.where(:analyzed_at => nil).each_in_thread(use_threads ? 100 : 0) { |id, domain|
         domain.analyze { |domain|
           begin
             url, body, headers, cached = download(domain)

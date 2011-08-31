@@ -29,6 +29,8 @@ gem 'therubyracer'
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
+gem 'ruby-prof'
+
 group :test do
   gem 'rspec-rails'
   gem 'spork', '0.9.0.rc9'
