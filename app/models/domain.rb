@@ -17,6 +17,10 @@ class Domain < ActiveRecord::Base
     domain.list_domains.create :list => list
   end
 
+  def self.to_be_analyzed
+    where(:analyzed_at => nil)
+  end
+
   private
 
   def destroy_orphaned_pages

@@ -43,6 +43,10 @@ end
 
 Spork.each_run do
   # This code will be run each time you run your specs.
+
+  RSpec.configure do |config|
+    config.include(Helpers)
+  end
 end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
@@ -75,6 +79,8 @@ RSpec.configure do |config|
   config.before do
     Resque.redis.flushall
   end
+
+  config.include(Helpers)
 
   FakeWeb.allow_net_connect = false
 end

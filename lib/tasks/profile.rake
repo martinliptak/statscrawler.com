@@ -1,12 +1,8 @@
-require "#{File.dirname(__FILE__)}/../../config/environment"
-
-namespace :stats do
-  task :profile do
-    result = RubyProf.profile do
-      Analyzers::MassPerformer.perform(false)
-    end
-
-    printer = RubyProf::GraphPrinter.new(result)
-    printer.print(STDOUT, :min_percent => 10)
+task :profile => :environment do
+  result = RubyProf.profile do
+    Analyzers::AnalyzeDomain.daemon(0)
   end
+
+  printer = RubyProf::GraphPrinter.new(result)
+  printer.print(STDOUT, :min_percent => 10)
 end
