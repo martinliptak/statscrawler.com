@@ -14,7 +14,7 @@ class Domain < ActiveRecord::Base
   
   def self.create_from_list(list, domain_name)
     domain = find_or_create_by_name(domain_name)
-    domain.list_domains.create :list => list
+    domain.list_domains.create(:list => list) unless domain.list_domains.where(:list => list).any?
   end
 
   def self.to_be_analyzed
