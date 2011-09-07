@@ -1,5 +1,15 @@
 require 'spec_helper'
 
+require 'resolv'
+def Resolv.getaddress(name)
+  case name
+    when 'statistiky-domen.sk', 'statistiky-domen-redirect.sk'
+      '195.210.28.80'
+    when 'statistiky-domen-second.sk'
+      '195.210.28.81'
+  end
+end
+
 describe Analyzers::AnalyzeDomain do
 
   describe 'Job' do
@@ -17,6 +27,7 @@ describe Analyzers::AnalyzeDomain do
         Page.count.should == 1
         Source.count.should == 1
         Feature.count.should == 2
+        Location.count.should == 1
 
         domain = Domain.first
         domain.page.should == Page.first
@@ -25,11 +36,17 @@ describe Analyzers::AnalyzeDomain do
         domain.page.source.body.should == '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>'
         domain.page.server.should == 'nginx'
         domain.page.features.count.should == 2
+        domain.location.should == Location.first
+        domain.location.ip.should == '195.210.28.80'
+        domain.location.country.should == 'Slovakia'
+        domain.location.city.should be_kind_of String
+        domain.location.longitude.should be_kind_of Numeric
+        domain.location.latitude.should be_kind_of Numeric
         domain.analyzed_at.should == Time.now.to_s
       }
     end
 
-    it "should not create duplicate pages" do
+    it "should not create duplicate pages and locations" do
       FakeWeb.register_uri(:get, "http://www.statistiky-domen.sk",
                            :body => '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>',
                            :server => :nginx)
@@ -44,6 +61,7 @@ describe Analyzers::AnalyzeDomain do
         Page.count.should == 1
         Source.count.should == 1
         Feature.count.should == 2
+        Location.count.should == 1
 
         domain = Domain.last
         domain.page.should == Page.last
@@ -52,6 +70,12 @@ describe Analyzers::AnalyzeDomain do
         domain.page.source.body.should == '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>'
         domain.page.server.should == 'nginx'
         domain.page.features.count.should == 2
+        domain.location.should == Location.first
+        domain.location.ip.should == '195.210.28.80'
+        domain.location.country.should == 'Slovakia'
+        domain.location.city.should be_kind_of String
+        domain.location.longitude.should be_kind_of Numeric
+        domain.location.latitude.should be_kind_of Numeric
         domain.analyzed_at.should == Time.now.to_s
       }
 
@@ -62,6 +86,7 @@ describe Analyzers::AnalyzeDomain do
         Domain.count.should == 2
         Page.count.should == 1
         Source.count.should == 1
+        Location.count.should == 1
 
         domain = Domain.last.reload
         domain.page.should == Page.last
@@ -69,6 +94,12 @@ describe Analyzers::AnalyzeDomain do
         domain.page.source.headers.should_not be_nil
         domain.page.source.body.should == '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>'
         domain.page.server.should == 'nginx'
+        domain.location.should == Location.first
+        domain.location.ip.should == '195.210.28.80'
+        domain.location.country.should == 'Slovakia'
+        domain.location.city.should be_kind_of String
+        domain.location.longitude.should be_kind_of Numeric
+        domain.location.latitude.should be_kind_of Numeric
         domain.analyzed_at.should == Time.now.to_s
       }
     end
@@ -91,6 +122,7 @@ describe Analyzers::AnalyzeDomain do
         Page.count.should == 1
         Source.count.should == 1
         Feature.count.should == 2
+        Location.count.should == 1
 
         domain = Domain.first
         domain.page.should == Page.first
@@ -98,6 +130,12 @@ describe Analyzers::AnalyzeDomain do
         domain.page.source.headers.should_not be_nil
         domain.page.source.body.should == '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>'
         domain.page.server.should == 'nginx'
+        domain.location.should == Location.first
+        domain.location.ip.should == '195.210.28.80'
+        domain.location.country.should == 'Slovakia'
+        domain.location.city.should be_kind_of String
+        domain.location.longitude.should be_kind_of Numeric
+        domain.location.latitude.should be_kind_of Numeric
         domain.analyzed_at.should == Time.now.to_s
       }
     end
@@ -122,6 +160,7 @@ describe Analyzers::AnalyzeDomain do
         Page.count.should == 2
         Source.count.should == 2
         Feature.count.should == 3
+        Location.count.should == 2
 
         domain = Domain.first
         domain.page.should == Page.first
@@ -130,6 +169,12 @@ describe Analyzers::AnalyzeDomain do
         domain.page.source.body.should == '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>'
         domain.page.server.should == 'nginx'
         domain.page.features.count.should == 2
+        domain.location.should == Location.first
+        domain.location.ip.should == '195.210.28.80'
+        domain.location.country.should == 'Slovakia'
+        domain.location.city.should be_kind_of String
+        domain.location.longitude.should be_kind_of Numeric
+        domain.location.latitude.should be_kind_of Numeric
         domain.analyzed_at.should == Time.now.to_s
 
         domain = Domain.last
@@ -139,11 +184,17 @@ describe Analyzers::AnalyzeDomain do
         domain.page.source.body.should == '<html><head><script src="jquery.js"></script></head>second</html>'
         domain.page.server.should == 'apache'
         domain.page.features.count.should == 1
+        domain.location.should == Location.last
+        domain.location.ip.should == '195.210.28.81'
+        domain.location.country.should == 'Slovakia'
+        domain.location.city.should be_kind_of String
+        domain.location.longitude.should be_kind_of Numeric
+        domain.location.latitude.should be_kind_of Numeric
         domain.analyzed_at.should == Time.now.to_s
       }
     end
 
-    it "should not create duplicate pages" do
+    it "should not create duplicate pages and locations" do
       FakeWeb.register_uri(:get, "http://www.statistiky-domen.sk",
                            :body => '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>',
                            :server => :nginx)
@@ -158,6 +209,7 @@ describe Analyzers::AnalyzeDomain do
         Page.count.should == 1
         Source.count.should == 1
         Feature.count.should == 2
+        Location.count.should == 1
 
         domain = Domain.last
         domain.page.should == Page.last
@@ -166,6 +218,12 @@ describe Analyzers::AnalyzeDomain do
         domain.page.source.body.should == '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>'
         domain.page.server.should == 'nginx'
         domain.page.features.count.should == 2
+        domain.location.should == Location.first
+        domain.location.ip.should == '195.210.28.80'
+        domain.location.country.should == 'Slovakia'
+        domain.location.city.should be_kind_of String
+        domain.location.longitude.should be_kind_of Numeric
+        domain.location.latitude.should be_kind_of Numeric
         domain.analyzed_at.should == Time.now.to_s
       }
 
@@ -176,6 +234,7 @@ describe Analyzers::AnalyzeDomain do
         Domain.count.should == 2
         Page.count.should == 1
         Source.count.should == 1
+        Location.count.should == 1
 
         domain = Domain.last.reload
         domain.page.should == Page.last
@@ -183,6 +242,12 @@ describe Analyzers::AnalyzeDomain do
         domain.page.source.headers.should_not be_nil
         domain.page.source.body.should == '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>'
         domain.page.server.should == 'nginx'
+        domain.location.should == Location.first
+        domain.location.ip.should == '195.210.28.80'
+        domain.location.country.should == 'Slovakia'
+        domain.location.city.should be_kind_of String
+        domain.location.longitude.should be_kind_of Numeric
+        domain.location.latitude.should be_kind_of Numeric
         domain.analyzed_at.should == Time.now.to_s
       }
     end
@@ -207,6 +272,7 @@ describe Analyzers::AnalyzeDomain do
         Page.count.should == 1
         Source.count.should == 1
         Feature.count.should == 2
+        Location.count.should == 1
 
         domain = Domain.first
         domain.page.should == Page.first
@@ -214,6 +280,12 @@ describe Analyzers::AnalyzeDomain do
         domain.page.source.headers.should_not be_nil
         domain.page.source.body.should == '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>'
         domain.page.server.should == 'nginx'
+        domain.location.should == Location.first
+        domain.location.ip.should == '195.210.28.80'
+        domain.location.country.should == 'Slovakia'
+        domain.location.city.should be_kind_of String
+        domain.location.longitude.should be_kind_of Numeric
+        domain.location.latitude.should be_kind_of Numeric
         domain.analyzed_at.should == Time.now.to_s
       }
     end

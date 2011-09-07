@@ -7,5 +7,7 @@ class CreateLocations < ActiveRecord::Migration
       t.float :longitude
       t.float :latitude
     end
+
+    add_index :locations, :ip, :unique => true
   end
 end
