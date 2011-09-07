@@ -76,8 +76,9 @@ module Analyzers
 
         [url, body, headers, true]
       else
-        open("http://www." + domain.name,
-                   :read_timeout => DOWNLOAD_TIMEOUT, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) { |file|
+        open(domain.url,
+             :read_timeout => DOWNLOAD_TIMEOUT,
+             :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) { |file|
           url = file.base_uri.to_s
           headers = file.meta
           body = file.read

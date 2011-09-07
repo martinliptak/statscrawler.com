@@ -71,4 +71,18 @@ describe Domain do
     Domain.count.should == 0
     Location.count.should == 0
   end
+
+  it "should return domain url" do
+    Domain.create(:name => 'statistiky-domen.sk')
+    Domain.last.reload.url.should == 'http://www.statistiky-domen.sk'
+
+    Domain.create(:name => 'www.statistiky-domen.sk')
+    Domain.last.reload.url.should == 'http://www.statistiky-domen.sk'
+
+    Domain.create(:name => 'rails.statistiky-domen.sk')
+    Domain.last.reload.url.should == 'http://rails.statistiky-domen.sk'
+
+    Domain.create(:name => 'statistiky-domen.co.uk')
+    Domain.last.reload.url.should == 'http://statistiky-domen.co.uk'
+  end
 end

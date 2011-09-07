@@ -26,6 +26,14 @@ class Domain < ActiveRecord::Base
     where(:analyzed_at => nil)
   end
 
+  def url
+    if name.tr('^.', '').size > 1
+      "http://#{name}"
+    else
+      "http://www.#{name}"
+    end
+  end
+
   private
 
   def destroy_orphaned_pages
