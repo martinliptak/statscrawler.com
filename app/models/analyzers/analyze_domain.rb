@@ -7,7 +7,7 @@ require 'analyzers/matcher.rb'
 
 module Analyzers
   class AnalyzeDomain
-    @queue = 'high'
+    @queue = 'analyzer'
 
     GEO_IP = GeoIP.new("vendor/GeoLiteCity.dat")
 
@@ -20,7 +20,8 @@ module Analyzers
       analyze(Domain.find(domain_id), 0)
     end
 
-    def self.daemon(thread_count = 100)
+    def self.daemon(thread_count = 200)
+
       if thread_count > 0
         Thread.abort_on_exception = true
 

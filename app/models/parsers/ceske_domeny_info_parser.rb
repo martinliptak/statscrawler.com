@@ -1,9 +1,9 @@
 require 'open-uri'
 
 module Parsers
-  class CeskeDomenyInfoParser
-    @queue = 'low'
+  class CeskeDomenyInfoParser < BaseParser
 
+    @queue = 'parser'
     def self.perform
       for page in (1..1_000_000)
         begin
