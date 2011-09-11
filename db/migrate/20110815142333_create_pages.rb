@@ -9,5 +9,9 @@ class CreatePages < ActiveRecord::Migration
     end
 
     add_index :pages, :url, :unique => true
+    add_index :pages, [:engine, :id]
+    add_index :pages, [:server, :id]
+    add_index :pages, [:doctype, :id]
+    add_index :pages, [:framework, :id]
   end
 end

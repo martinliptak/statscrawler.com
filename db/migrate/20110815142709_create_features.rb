@@ -4,6 +4,6 @@ class CreateFeatures < ActiveRecord::Migration
       t.string :name
       t.references :page
     end
-    add_index :features, :page_id
+    add_index :features, [:page_id, :name]
   end
 end

@@ -23,6 +23,10 @@ class Domain < ActiveRecord::Base
     where(:analyzed_at => nil)
   end
 
+  def self.analyzed
+    where('analyzed_at IS NOT NULL')
+  end
+
   def url
     if name.tr('^.', '').size > 1
       "http://#{name}"

@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(:version => 20110816182407) do
     t.integer "page_id"
   end
 
-  add_index "features", ["page_id"], :name => "index_features_on_page_id"
+  add_index "features", ["page_id", "name"], :name => "index_features_on_page_id_and_name"
 
   create_table "list_domains", :force => true do |t|
     t.string  "list"
@@ -47,6 +47,8 @@ ActiveRecord::Schema.define(:version => 20110816182407) do
     t.float  "latitude"
   end
 
+  add_index "locations", ["city", "id"], :name => "index_locations_on_city_and_id"
+  add_index "locations", ["country", "id"], :name => "index_locations_on_country_and_id"
   add_index "locations", ["ip"], :name => "index_locations_on_ip", :unique => true
 
   create_table "pages", :force => true do |t|
@@ -57,6 +59,10 @@ ActiveRecord::Schema.define(:version => 20110816182407) do
     t.string "framework"
   end
 
+  add_index "pages", ["doctype", "id"], :name => "index_pages_on_doctype_and_id"
+  add_index "pages", ["engine", "id"], :name => "index_pages_on_engine_and_id"
+  add_index "pages", ["framework", "id"], :name => "index_pages_on_framework_and_id"
+  add_index "pages", ["server", "id"], :name => "index_pages_on_server_and_id"
   add_index "pages", ["url"], :name => "index_pages_on_url", :unique => true
 
   create_table "sources", :force => true do |t|

@@ -1,0 +1,12 @@
+<article class="block" width="960" height="400">
+    <div class="chart"
+         title="<%= title %>"
+         data-type="pie"
+         data-series-data="<%= data.collect { |h| [h[0], h[1].to_f * 100 / total]  }.to_json %>"
+         data-tooltip="<%= tooltip rescue "this.point.name"%>"
+         data-no-pointer="<%= no_pointer rescue nil %>"
+    ></div>
+    <% if (description rescue false) %>
+        <p class="box"><%= description.html_safe %></p>
+    <% end %>
+</article>

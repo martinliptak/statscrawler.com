@@ -1,0 +1,4 @@
+#!/bin/bash
+
+nohup rake resque:work QUEUE=parser VERBOSE=1 RAILS_ENV=production > /rails/statscrawler.com/log/parser.out 2>&1 &
+

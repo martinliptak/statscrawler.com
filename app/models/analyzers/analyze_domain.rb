@@ -1,10 +1,5 @@
 require 'resolv.rb'
 
-require 'page.rb'
-require 'source.rb'
-require 'feature.rb'
-require 'analyzers/matcher.rb'
-
 module Analyzers
   class AnalyzeDomain
     @queue = 'analyzer'

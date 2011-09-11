@@ -1,0 +1,39 @@
+<p>There are <%= @domains.count %> domains in this list. </p>
+
+<%= render "shared/column", :title => "Frameworks",
+               :data => @distribution[:framework],
+               :no_pointer => true,
+               :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains are powered by <b>'+ this.x +'</b>. '",
+               :x_title => "Framework", :y_title => "Domains" %>
+
+<%= render "shared/column", :title => "Javascript libraries",
+               :data => @distribution[:feature],
+               :no_pointer => true,
+               :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains use <b>'+ this.x +'</b>. '",
+               :x_title => "Framework", :y_title => "Domains" %>
+
+<%= render "shared/pie", :title => "Servers",
+               :data => @distribution[:server],
+               :total => @domains.count %>
+
+<%= render "shared/pie", :title => "Languages",
+               :data => @distribution[:engine],
+               :total => @domains.count %>
+
+<%= render "shared/pie", :title => "Doctypes",
+               :data => @distribution[:doctype],
+               :total => @domains.count %>
+
+<%= render "shared/pie", :title => "Countries",
+               :data => @distribution[:country],
+               :total => @domains.count %>
+
+<%= render "shared/column", :title => "Cities",
+               :data => @distribution[:city],
+               :no_pointer => true,
+               :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains are hosted in <b>'+ this.x +'</b>.' ",
+               :x_title => "City", :y_title => "Domains" %>
+
+<article class="block" >
+    <div id="map" data-markers="<%= @markers.to_json %>"></div>
+</article>

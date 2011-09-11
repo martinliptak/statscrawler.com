@@ -1,0 +1,133 @@
+/*
+ * This is a manifest file that'll automatically include all the stylesheets available in this directory
+ * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
+ * the top of the compiled file, but it's generally better to create a new file per style scope.
+ *= require_self
+ *= require_tree . 
+*/
+
+$green: #59A43E;
+$brown: #732E18;
+
+body {
+    font-family: verdana;
+
+    #page {
+        width: 960px;
+        margin: 0 auto;
+
+        header {
+            padding: 10px 25px;
+            background: $green;
+            color: $brown;
+            height: 75px;
+
+            h1 {
+                margin: 0;
+            }
+
+            #slogan {
+
+            }
+
+            #description {
+                float: right;
+                width: 360px;
+                text-align: justify;
+                font-style: italic;
+            }
+        }
+
+        #bar {
+            padding: 0 25px;
+            margin-top: 10px;
+            height: 50px;
+
+            background: $green;
+            color: $brown;
+
+            #analyze {
+                float: right;
+                margin: 10px;
+
+                input[type=submit] {
+                    padding: 5px 10px;
+                }
+
+                input[type=text] {
+                    padding: 5px 10px;
+                    border: 1px solid $brown;
+                    color: $brown;
+                    width: 240px;
+                }
+            }
+
+            nav {
+                ul {
+                    padding: 0;
+                    margin: 0;
+
+                    li {
+                        float: left;
+                        display: block;
+                        margin-top: 10px;
+                        padding: 10px 15px 0 15px;
+                        height: 30px;
+
+                        a {
+                            color: $brown;
+                            text-decoration: none;
+                        }
+
+                        a:hover {
+                            text-decoration: underline;
+                        }
+                    }
+
+                    li.active {
+                        background: white;
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+
+        #content {
+            #map {
+                width: 870px;
+                height: 420px;
+                margin: 0 0 10px 70px;
+            }
+
+            #move-to-top {
+                float: right;
+                margin: 0 10px 10px 0;
+            }
+
+            .clear {
+                float: none;
+                clear: both;
+            }
+        }
+
+        footer {
+            height: 64px;
+
+            padding: 10px 25px;
+            background: $green;
+            color: $brown;
+
+            margin-bottom: 20px;
+
+            img {
+                float: left;
+                margin-right: 15px;
+            }
+        }
+    }
+
+    a {
+        color: $brown;
+        text-decoration: underline;
+    }
+}
