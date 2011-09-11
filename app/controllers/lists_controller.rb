@@ -31,6 +31,12 @@ class ListsController < ApplicationController
           group by #{type} order by count(*) desc"), @domains.count / 100)
     end
 
+    @html5 = Domain.connection.execute("
+      select count(*) from pages
+        join domains on page_id = pages.id
+        join list_domains on domain_id = domains.id and list = '#{list}'
+        where doctype = 'html' ").first.first
+
     @distribution[:country] = distribution(Domain.connection.execute("
       select country, count(*) from locations
         join domains on locations.id = domains.location_id

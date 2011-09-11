@@ -1,39 +1,60 @@
-<p>There are <%= @domains.count %> domains in this list. </p>
+<p><%= number_with_delimiter @domains.analyzed.count %> domains have been analyzed in this list. </p>
 
 <%= render "shared/column", :title => "Frameworks",
                :data => @distribution[:framework],
                :no_pointer => true,
                :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains are powered by <b>'+ this.x +'</b>. '",
-               :x_title => "Framework", :y_title => "Domains" %>
+               :x_title => "Framework", :y_title => "Domains",
+               :description => 'There are many ways to detect a web framework.
+                    Some add X-Powered-By HTTP header or set unique cookie name,
+                    some provide HTTP generator meta tag. Often the only reliable way
+                    is the directory structure of stylesheets, javascripts and images.
+                    Sometimes unique names of HTML element classes can be used.
+                    <b>Detection is not reliable.</b>' %>
 
 <%= render "shared/column", :title => "Javascript libraries",
                :data => @distribution[:feature],
                :no_pointer => true,
                :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains use <b>'+ this.x +'</b>. '",
-               :x_title => "Framework", :y_title => "Domains" %>
+               :x_title => "Framework", :y_title => "Domains",
+               :description => 'Javascript library detection depends on file names of included scripts or
+                                on inline script code in some cases (Google Analytics UA-* identifier).
+                                Detection is more reliable than framework detection.' %>
 
 <%= render "shared/pie", :title => "Servers",
                :data => @distribution[:server],
-               :total => @domains.count %>
+               :total => @domains.count,
+               :description => 'Depends on Server HTTP header. Often hidden for security reasons.' %>
 
 <%= render "shared/pie", :title => "Languages",
                :data => @distribution[:engine],
-               :total => @domains.count %>
+               :total => @domains.count,
+               :description => 'Depends on X-Powered-By, cookie name and on detected framework.' %>
 
 <%= render "shared/pie", :title => "Doctypes",
                :data => @distribution[:doctype],
-               :total => @domains.count %>
+               :total => @domains.count,
+               :description => "&lt;!DOCTYPE html&gt; have sites on #{number_with_delimiter @html5} domains,
+                                that is #{number_to_percentage(@html5.to_f * 100 / @domains.count, :precision => 2)}. "%>
 
 <%= render "shared/pie", :title => "Countries",
                :data => @distribution[:country],
-               :total => @domains.count %>
+               :total => @domains.count,
+               :description => 'Hosting servers location can be found out using geoiplocation.
+                                Country-precision location is reliable. ' %>
 
 <%= render "shared/column", :title => "Cities",
                :data => @distribution[:city],
                :no_pointer => true,
                :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains are hosted in <b>'+ this.x +'</b>.' ",
-               :x_title => "City", :y_title => "Domains" %>
+               :x_title => "City", :y_title => "Domains",
+               :description => 'City-precision location can sometimes be very inaccurate,
+                                numbers and map markers are not to be taken seriously. ' %>
 
 <article class="block" >
     <div id="map" data-markers="<%= @markers.to_json %>"></div>
+
+    <p class="box">
+        Zoom in the map to see smaller hosting centers.
+    </p>
 </article>
