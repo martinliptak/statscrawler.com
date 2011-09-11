@@ -9,7 +9,9 @@ gem 'mysql2'
 gem 'resque'
 gem 'nokogiri'
 gem 'geoip'
-
+gem 'kaminari'
+gem "whois"
+gem "PageRankr"
 
 # Gems used only for assets and not required
 # in production environments by default.

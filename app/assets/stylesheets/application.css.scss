@@ -93,12 +93,6 @@ body {
         }
 
         #content {
-            #map {
-                width: 870px;
-                height: 420px;
-                margin: 0 0 10px 70px;
-            }
-
             #move-to-top {
                 float: right;
                 margin: 0 10px 10px 0;
@@ -129,5 +123,9 @@ body {
     a {
         color: $brown;
         text-decoration: underline;
+    }
+
+    h1, h2, h3 {
+        color: $brown;
     }
 }

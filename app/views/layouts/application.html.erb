@@ -17,7 +17,7 @@
 
   <%= csrf_meta_tag %>
 </head>
-<body>
+<body class="<%= params[:controller] %>">
     <div id="page">
         <header>
             <div id="description">Which frameworks and javascript libraries
@@ -29,10 +29,11 @@
 
         <section id="bar">
            <div id="analyze">
-               <%= form_tag(domains_path, :method => :get) do %>
-                    <%= text_field_tag :search, params[:search], :placeholder => 'Domain you are interested in...',
+               <%= form_tag(search_domains_path, :method => :get) do %>
+                    <%= text_field_tag :search, params[:search],
+                                       :placeholder => 'Domain you are interested in...',
                                        :title => 'Domain you are interested in...' %>
-                    <%= submit_tag "Analyze", :name => nil %>
+                    <%= submit_tag "Search", :name => nil %>
                 <% end %>
            </div>
 
