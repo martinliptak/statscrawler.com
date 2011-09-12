@@ -88,7 +88,7 @@ class ListsController < ApplicationController
           ["<a href=\"#{url_for search_domains_path(attribute => data[0], :list => @list)}\">#{data[0]}</a>", data[1]]
         end
       end
-    dist << ["Other", other]
+    dist << ["Other", other] if other > 0
     dist
   end
 end
