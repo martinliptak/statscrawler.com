@@ -1,0 +1,17 @@
+<h1><%= @title %></h1>
+
+<% if @whois %>
+    <table>
+        <% @whois.each_line do |line|
+                if line.strip[0] != '%' and line[0] != 37 and not line.blank?
+                    line.match /(\S+)[\s]+(.+)$/
+        %>
+                    <tr><th><%= $1 %></th><td><%= $2 %></td></tr>
+        <%
+                end
+            end
+        %>
+    </table>
+<% else %>
+    <p>Whois is unavailable. </p>
+<% end %>

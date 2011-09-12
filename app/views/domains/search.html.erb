@@ -5,7 +5,7 @@
         <% for domain in @domains %>
             <tr>
               <td><%= link_to domain.name, domain %></td>
-              <td><%= link_to 'Go to site &raquo;'.html_safe, domain.url %>
+              <td><%= link_to 'Go to site &raquo;'.html_safe, domain.url, :rel => :nofollow, :class => :external %>
             </tr>
         <% end %>
     </table>

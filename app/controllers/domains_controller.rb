@@ -1,6 +1,27 @@
+require "whois"
+require "page_rankr"
+
 class DomainsController < ApplicationController
   def show
+    begin
+      @domain = Domain.find(params[:id])
+      @title = "#{@domain.name}"
+      if @domain.location
+        domains = Domain.includes(:location).where('locations.ip' => @domain.location.ip).count
 
+        @markers = [{
+            :latitude => @domain.location.latitude,
+            :longitude => @domain.location.longitude,
+            :title => @domain.location.ip,
+            :icon => marker_icon(domains),
+            :html => "<b>#{@domain.location.ip}</b><br/>
+                        <a href=#{url_for(search_domains_path(:ip => @domain.location.ip))}>
+                          #{pluralize(domains, 'domain')}</a>"
+        }]
+      end
+    rescue ActiveRecord::RecordNotFound
+      render :action => "410", :status => '410 Gone'
+    end
   end
 
   def search
@@ -65,6 +86,34 @@ class DomainsController < ApplicationController
         @title = params[:framework] || params[:feature] || params[:engine] || params[:server] || params[:doctype] || params[:ip] || params[:city] || params[:country]
         @title = @title.titleize
       end
+    end
+  end
+
+  def whois
+    begin
+      @domain = Domain.find(params[:id])
+      @title = "Whois #{@domain.name}"
+
+      begin
+        client = Whois::Client.new
+
+        @whois = client.query(@domain.name).to_s
+      rescue StandardError => err
+        logger.error "#{@domain.name}: #{err}"
+      end
+    rescue ActiveRecord::RecordNotFound
+      render :action => "410", :status => '410 Gone'
+    end
+  end
+
+  def pagerank
+    begin
+      @domain = Domain.find(params[:id])
+      @title = "Pagerank #{@domain.name}"
+
+      @pagerank = PageRankr.ranks(@domain.name, :alexa_us, :alexa_global, :compete, :google)
+    rescue ActiveRecord::RecordNotFound
+      render :action => "410", :status => '410 Gone'
     end
   end
 

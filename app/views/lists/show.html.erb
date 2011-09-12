@@ -35,6 +35,11 @@
                :description => "&lt;!DOCTYPE html&gt; have sites on #{number_with_delimiter @html5} domains,
                                 that is #{number_to_percentage(@html5.to_f * 100 / @domains.count, :precision => 2)}. "%>
 
+<%= render "shared/pie", :title => "AAAA record",
+               :data => @distribution[:ipv6],
+               :total => @domains.count,
+               :description => 'Domains which have AAAA DNS record are probably IPv6-ready. ' %>
+
 <%= render "shared/pie", :title => "Countries",
                :data => @distribution[:country],
                :total => @domains.count,

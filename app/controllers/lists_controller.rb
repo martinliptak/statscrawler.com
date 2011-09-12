@@ -1,9 +1,7 @@
 class ListsController < ApplicationController
-  include ActionView::Helpers::TextHelper
-  include ActionView::Helpers::AssetTagHelper
 
   def show
-    @domains = Domain.includes(:list_domains).where('list_domains.list' => params[:id])
+    @domains = Domain.includes(:list_domains).where('list_domains.list' => params[:id]).analyzed
 
     @list = params[:id] if ['sk_nic', 'cz', 'dmoz'].include? params[:id]
 
@@ -36,6 +34,12 @@ class ListsController < ApplicationController
         join domains on page_id = pages.id
         join list_domains on domain_id = domains.id and list = '#{@list}'
         where doctype = 'html' ").first.first
+
+    @distribution[:ipv6] = Domain.connection.execute("
+      select if(ipv6, 'Yes', 'No'), count(*) from domains
+        join list_domains on domain_id = domains.id and list = '#{@list}'
+        where ipv6 is not null
+        group by ipv6 order by count(*) desc")
 
     @distribution[:country] = distribution(Domain.connection.execute("
       select country, count(*) from locations
@@ -86,39 +90,5 @@ class ListsController < ApplicationController
       end
     dist << ["Other", other]
     dist
-  end
-
-
-  def marker_icon(domains)
-    case domains
-       when 0..30
-          {
-              :image => "/images/0.png",
-              :iconsize => [18, 23],
-              :iconanchor => [9, 23],
-              :infowindowanchor => [9, 0]
-          }
-       when 30..1000
-          {
-              :image => "/images/1.png",
-              :iconsize => [27, 34],
-              :iconanchor => [13, 34],
-              :infowindowanchor => [13, 0]
-          }
-       when 1000..10000
-          {
-              :image => "/images/2.png",
-              :iconsize => [33, 42],
-              :iconanchor => [16, 33],
-              :infowindowanchor => [16, 0]
-          }
-       when 10000..1000000
-          {
-              :image => "/images/3.png",
-              :iconsize => [40, 51],
-              :iconanchor => [20, 51],
-              :infowindowanchor => [20, 0]
-          }
-     end
   end
 end
