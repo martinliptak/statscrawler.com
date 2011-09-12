@@ -3,8 +3,15 @@ module Analyzers
     def match(headers, body)
       @headers = headers
       @data = body
-      @document = Nokogiri::HTML(@data)
       @result = { :features => [] }
+      @document = Nokogiri::HTML(@data)
+
+      description = @document.css("meta[name=description], meta[name=Description]").first
+      @result[:description] = description['content'] if description
+
+      keywords = @document.css("meta[name=keywords], meta[name=keywords]").first
+      @result[:keywords] = keywords['content'] if keywords
+
       run
       @result[:features].uniq!
       @result

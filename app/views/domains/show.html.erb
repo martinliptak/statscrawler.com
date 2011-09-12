@@ -14,7 +14,7 @@
     <%if @domain.ipv6 %>
         <div style="margin-top: 10px;">
           <b>This domain has an AAAA DNS record.</b> AAAA DNS records contain IPv6 addresses.
-            Domain is probably ready for IPv6.
+             Domain is probably ready for IPv6.
         </div>
     <% end %>
 
@@ -22,6 +22,8 @@
         <h2>Site</h2>
 
         <table>
+          <tr><th>Description</th><td><%= @domain.page.description %></td></tr>
+          <tr><th>Keywords</th><td><%= @domain.page.keywords %></td></tr>
           <tr><th>Server</th><td><%= @domain.page.server? ?
                                              link_to(@domain.page.server, search_domains_path(:server => @domain.page.server))
                                      : "Undetected" %></td></tr>

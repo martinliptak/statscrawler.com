@@ -2,6 +2,8 @@ class CreatePages < ActiveRecord::Migration
   def change
     create_table :pages do |t|
       t.string :url
+      t.string :description, :limit => 1024
+      t.string :keywords, :limit => 512
       t.string :server
       t.string :engine
       t.string :doctype

@@ -50,9 +50,12 @@ ActiveRecord::Schema.define(:version => 20110816182407) do
   add_index "locations", ["city", "id"], :name => "index_locations_on_city_and_id"
   add_index "locations", ["country", "id"], :name => "index_locations_on_country_and_id"
   add_index "locations", ["ip"], :name => "index_locations_on_ip", :unique => true
+  add_index "locations", ["longitude", "latitude", "city", "id"], :name => "index_locations_on_longitude_and_latitude_and_city_and_id"
 
   create_table "pages", :force => true do |t|
     t.string "url"
+    t.string "description", :limit => 1024
+    t.string "keywords",    :limit => 512
     t.string "server"
     t.string "engine"
     t.string "doctype"

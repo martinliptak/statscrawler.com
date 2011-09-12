@@ -101,6 +101,8 @@ module Analyzers
 
       matcher = Matcher.new
       result = matcher.match(headers, body)
+      domain.page.description = result[:description]
+      domain.page.keywords = result[:keywords]
       domain.page.server = result[:server]
       domain.page.engine = result[:engine]
       domain.page.doctype = result[:doctype]

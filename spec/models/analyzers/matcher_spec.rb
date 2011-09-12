@@ -4,6 +4,8 @@ describe Analyzers::Matcher do
 
   it "should detect facebook 1" do
     result = run_matcher_on_fixture(1)
+    result[:description].should == "0101.sk domena plna zabavy, vtipy, humor, zabava, online hry a omnoho viac"
+    result[:keywords].should == "nesmrtelnost,extra vtipy,vtip baza,humorne situacie,morbidne obrazky,domena plna zabavy"
     result[:server].should == :nginx
     result[:engine].should == :php
     result[:doctype].should == "html public \"-//w3c//dtd xhtml 1.0 strict//en\""

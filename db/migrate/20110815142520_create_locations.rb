@@ -11,6 +11,6 @@ class CreateLocations < ActiveRecord::Migration
     add_index :locations, :ip, :unique => true
     add_index :locations, [:country, :id]
     add_index :locations, [:city, :id]
-    add_index :locatiions, [:longitude, :latitude, :city, :id]
+    add_index :locations, [:longitude, :latitude, :city, :id]
   end
 end
