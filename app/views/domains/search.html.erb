@@ -1,15 +1,23 @@
 <h1><%= @title%></h1>
 
-<table>
-    <% for domain in @domains %>
-        <tr>
-          <td><%= link_to domain.name, domain %></td>
-          <td><%= link_to 'Go to site &raquo;'.html_safe, domain.url %>
-        </tr>
-    <% end %>
-</table>
+<% if @domains.any? %>
+    <table>
+        <% for domain in @domains %>
+            <tr>
+              <td><%= link_to domain.name, domain %></td>
+              <td><%= link_to 'Go to site &raquo;'.html_safe, domain.url %>
+            </tr>
+        <% end %>
+    </table>
 
-<div id="pagination">
-    <span class="count">Found <%= number_with_delimiter @domains.total_count, :delimiter => ' ' %> domains</span>
-    <%= paginate @domains %>
-</div>
+    <div id="pagination">
+        <span class="count">Found <%= number_with_delimiter @domains.total_count, :delimiter => ' ' %> domains</span>
+        <%= paginate @domains %>
+    </div>
+<% else %>
+    <% if params[:name].present? %>
+        <p>Domain name beginning with '<%= params[:name] %>' has not been found.<p>
+    <% else %>
+        <p>No domains match given criteria.<p>
+    <% end %>
+<% end %>

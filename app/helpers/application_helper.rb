@@ -4,7 +4,7 @@ module ApplicationHelper
     @title ? "#{@title} | Statscrawler.com" : "Statscrawler.com"
   end
 
-  def menu_item(title, path)
-    "<li class=\"right #{current_page?(path) ? "active" : ""}\">#{link_to title, path}</li>".html_safe
+  def list(title, list)
+    "<li class=\"right #{list == @list ? "active" : ""}\">#{link_to title, list_path(list)}</li>".html_safe
   end
 end

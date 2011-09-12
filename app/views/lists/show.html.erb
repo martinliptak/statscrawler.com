@@ -2,7 +2,6 @@
 
 <%= render "shared/column", :title => "Frameworks",
                :data => @distribution[:framework],
-               :no_pointer => true,
                :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains are powered by <b>'+ this.x +'</b>. '",
                :x_title => "Framework", :y_title => "Domains",
                :description => 'There are many ways to detect a web framework.
@@ -14,7 +13,6 @@
 
 <%= render "shared/column", :title => "Javascript libraries",
                :data => @distribution[:feature],
-               :no_pointer => true,
                :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains use <b>'+ this.x +'</b>. '",
                :x_title => "Framework", :y_title => "Domains",
                :description => 'Javascript library detection depends on file names of included scripts or
@@ -45,7 +43,6 @@
 
 <%= render "shared/column", :title => "Cities",
                :data => @distribution[:city],
-               :no_pointer => true,
                :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains are hosted in <b>'+ this.x +'</b>.' ",
                :x_title => "City", :y_title => "Domains",
                :description => 'City-precision location can sometimes be very inaccurate,

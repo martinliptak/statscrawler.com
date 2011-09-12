@@ -30,7 +30,7 @@
         <section id="bar">
            <div id="analyze">
                <%= form_tag(search_domains_path, :method => :get) do %>
-                    <%= text_field_tag :search, params[:search],
+                    <%= text_field_tag :name, params[:name],
                                        :placeholder => 'Domain you are interested in...',
                                        :title => 'Domain you are interested in...' %>
                     <%= submit_tag "Search", :name => nil %>
@@ -39,9 +39,9 @@
 
             <nav>
                 <ul>
-                    <%= menu_item 'DMOZ domains', list_path('dmoz') %>
-                    <%= menu_item 'Slovak domains', list_path('sk_nic') %>
-                    <%= menu_item 'Czech domains', list_path('cz') %>
+                    <%= list 'DMOZ domains', 'dmoz' %>
+                    <%= list 'Slovak domains', 'sk_nic' %>
+                    <%= list 'Czech domains', 'cz' %>
                 </ul>
             </nav>
         </section>
@@ -56,7 +56,6 @@
 
         <footer>
             <%= image_tag 'wslogo.png' %>
-            <%= image_tag 'rails.png' %>
             Statscrawler is maintained by <a href="http://twitter.com/martinliptak">@martinliptak</a>.
             Any feedback is welcome. Virtual server for crawling has been provided by
             <a href="http://www.websupport.sk">Websupport, s.r.o.</a>.
