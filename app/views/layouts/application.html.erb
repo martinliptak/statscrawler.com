@@ -41,7 +41,7 @@
             <a href="/" id="logo">
                 <h1>Statscrawler.com</h1>
             </a>
-            <div id="slogan">Analyzed <%= number_with_delimiter(Domain.analyzed.count) %> domains and analyzing...</div>
+            <div id="slogan">Analyzed <%= number_with_delimiter(Domain.analyzed.count) %> domains and analyzing more...</div>
         </header>
 
         <section id="bar">
@@ -108,13 +108,11 @@
         </section>
 
         <footer>
-            <%= image_tag 'wslogo.png' %>
-            Statscrawler.com has been created by <a href="http://twitter.com/martinliptak">@martinliptak</a>.
-            Any feedback is welcome. If anyone is interested in framework detection methods, source code
-            of framework detection can be found on Github.
-
-            Virtual server for crawling has been provided by <a href="http://www.websupport.sk">Websupport, s.r.o.</a>.
-
+            <%= link_to image_tag('wslogo.png'), 'http://www.websupport.sk' %>
+            Statscrawler has been created by <a href="http://twitter.com/martinliptak">@martinliptak</a>.
+            Any feedback is welcome. If you are interested in how framework detection works, check out
+            <a href="https://github.com/martinliptak/statscrawler-matcher">Github</a>.
+            Virtual server for crawling has been provided by <a href="http://www.websupport.sk">Websupport</a>.
         </footer>
     </div>
 

@@ -9,10 +9,6 @@ class Domain < ActiveRecord::Base
   def to_param
     name.gsub('.', '_')
   end
-
-  def self.find(name)
-    find_by_name(name.gsub('_', '.'))
-  end
   
   def analyze
     yield(self)

@@ -4,59 +4,57 @@
                :data => @distribution[:framework],
                :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains are powered by <b>'+ this.x +'</b>. '",
                :x_title => "Framework", :y_title => "Domains",
-               :description => 'There are many ways to detect a web framework.
-                    Some add X-Powered-By HTTP header or set unique cookie name,
-                    some provide HTTP generator meta tag. Often the only reliable way
-                    is the directory structure of stylesheets, javascripts and images.
-                    Sometimes unique names of HTML element classes can be used.
-                    <b>Detection is not reliable.</b>' %>
+               :description => 'There are many ways to detect a framework.
+                    For example some add X-Powered-By HTTP header, some set unique cookie name or
+                    provide HTTP generator meta tag. Often the only reliable way
+                    is the directory structure of stylesheets, javascripts or images.
+                    Unique names of HTML element classes can also be used.
+                    <b>Framework detection is not reliable.</b>' %>
 
 <%= render "shared/column", :title => "Javascript libraries",
                :data => @distribution[:feature],
                :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains use <b>'+ this.x +'</b>. '",
-               :x_title => "Framework", :y_title => "Domains",
-               :description => 'Javascript library detection depends on file names of included scripts or
-                                on inline script code in some cases (Google Analytics UA-* identifier).
-                                Detection is more reliable than framework detection.' %>
+               :x_title => "Library", :y_title => "Domains",
+               :description => 'Javascript libraries can be detected from file names of included scripts or
+                                in some cases from inline script code  (Google Analytics UA-* identifier).
+                                Detection is more reliable here.' %>
 
 <%= render "shared/pie", :title => "Servers",
                :data => @distribution[:server],
                :total => @domains.count,
-               :description => 'Depends on Server HTTP header. Often hidden for security reasons.' %>
+               :description => 'Detected from Server header, although it is often hidden for security reasons.' %>
 
 <%= render "shared/pie", :title => "Languages",
                :data => @distribution[:engine],
                :total => @domains.count,
-               :description => 'Depends on X-Powered-By, cookie name and on detected framework.' %>
+               :description => 'Detected from X-Powered-By header, set cookie name or retroactively from framework.' %>
 
 <%= render "shared/pie", :title => "Doctypes",
                :data => @distribution[:doctype],
                :total => @domains.count,
-               :description => "&lt;!DOCTYPE html&gt; have sites on #{number_with_delimiter @html5} domains,
+               :description => "&lt;!DOCTYPE html&gt; is used on #{number_with_delimiter @html5} domains,
                                 that is #{number_to_percentage(@html5.to_f * 100 / @domains.count, :precision => 2)}. "%>
 
 <%= render "shared/pie", :title => "AAAA record",
                :data => @distribution[:ipv6],
                :total => @domains.count,
-               :description => 'Domains which have AAAA DNS record are probably IPv6-ready. ' %>
+               :description => 'Domains with an AAAA DNS record are probably IPv6-ready. ' %>
 
 <%= render "shared/pie", :title => "Countries",
                :data => @distribution[:country],
                :total => @domains.count,
-               :description => 'Hosting servers location can be found out using geoiplocation.
+               :description => 'Hosting server location can be determined using geoiplocation.
                                 Country-precision location is reliable. ' %>
 
 <%= render "shared/column", :title => "Cities",
                :data => @distribution[:city],
                :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains are hosted in <b>'+ this.x +'</b>.' ",
                :x_title => "City", :y_title => "Domains",
-               :description => 'City-precision location can sometimes be very inaccurate,
-                                numbers and map markers are not to be taken seriously. ' %>
+               :description => 'Finer city-precision location can be very inaccurate.
+                                These numbers and map markers are not to be taken seriously. ' %>
 
 <article class="block" >
     <div id="map" data-markers="<%= @markers.to_json %>"></div>
 
-    <p class="box">
-        Zoom in the map to see smaller hosting centers.
-    </p>
+    <p>Zoom in to country level to see the smallest hosting centers. </p>
 </article>

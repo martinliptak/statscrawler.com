@@ -5,8 +5,8 @@ class DomainsController < ApplicationController
   include DomainsHelper
 
   def show
-    @domain = Domain.find(params[:id])
-    @title = "#{@domain.name}"
+    @domain = Domain.find_by_name(decode_domain_name(params[:id]))
+    @title = "Domain #{@domain.name}"
     if @domain.location
       domains = Domain.includes(:location).where('locations.ip' => @domain.location.ip).count
 
@@ -94,7 +94,7 @@ class DomainsController < ApplicationController
   end
 
   def whois
-    @domain = Domain.find(params[:id])
+    @domain = Domain.find_by_name(decode_domain_name(params[:id]))
     @title = "Whois #{@domain.name}"
 
     begin
@@ -109,7 +109,7 @@ class DomainsController < ApplicationController
   end
 
   def pagerank
-    @domain = Domain.find(params[:id])
+    @domain = Domain.find_by_name(decode_domain_name(params[:id]))
     @title = "Pagerank #{@domain.name}"
 
     @pagerank = PageRankr.ranks(@domain.name, :alexa_us, :alexa_global, :compete, :google)
@@ -134,7 +134,7 @@ class DomainsController < ApplicationController
       @title = "Analyzing #{domain.name}"
       @task = true
 
-      Resque.enqueue(Analyzers::AnalyzeDomain, domain.id)
+      Resque.enqueue(Analyzers::AnalyzeDomain, domain.id) unless request.referer == request.url # refreshed
     end
   rescue ActiveRecord::RecordNotFound
     render :action => "410", :status => '410 Gone'

@@ -6,11 +6,13 @@
  *= require_tree . 
 */
 
-$green: #59A43E;
-$brown: #732E18;
+$back: #89a54e;
+$fore: #3d3d3d;
+$fore_bold: #323232;
 
 body {
     font-family: verdana;
+    color: $fore;
 
     #page {
         width: 960px;
@@ -18,8 +20,8 @@ body {
 
         header {
             padding: 10px 25px;
-            background: $green;
-            color: $brown;
+            background: $back;
+            color: $fore;
             height: 75px;
 
             #logo {
@@ -28,6 +30,7 @@ body {
                 h1 {
                     margin: 0;
                     font-size: 3em;
+                    color: $fore_bold;
                 }
             }
 
@@ -38,7 +41,7 @@ body {
             #description {
                 float: right;
                 width: 360px;
-                text-align: justify;
+                text-align: right;
                 font-style: italic;
             }
         }
@@ -48,12 +51,12 @@ body {
             margin-top: 10px;
             height: 50px;
 
-            background: $green;
-            color: $brown;
+            background: $back;
+            color: $fore;
 
             #analyze {
                 float: right;
-                margin: 10px;
+                margin: 10px 0 10px 10px;
 
                 input[type=submit] {
                     padding: 5px 10px;
@@ -61,8 +64,8 @@ body {
 
                 input[type=text] {
                     padding: 5px 10px;
-                    border: 1px solid $brown;
-                    color: $brown;
+                    border: 1px solid $fore;
+                    color: $fore;
                     width: 240px;
                 }
             }
@@ -80,7 +83,7 @@ body {
                         height: 30px;
 
                         a {
-                            color: $brown;
+                            color: $fore;
                             text-decoration: none;
                         }
 
@@ -102,9 +105,9 @@ body {
             margin: 0 25px;
 
             #map {
-                width: 870px;
+                width: 910px;
                 height: 420px;
-                margin: 0 0 10px 20px;
+                margin: 0 0 10px 0;
             }
 
             .clear {
@@ -113,7 +116,7 @@ body {
             }
 
             #links {
-                margin-top: 20px;
+                margin-top: 50px;
                 margin-bottom: 10px;
 
                 .left {
@@ -134,8 +137,8 @@ body {
             height: 64px;
 
             padding: 10px 25px;
-            background: $green;
-            color: $brown;
+            background: $back;
+            color: $fore;
 
             margin-bottom: 20px;
 
@@ -147,11 +150,11 @@ body {
     }
 
     a {
-        color: $brown;
+        color: $fore;
         text-decoration: underline;
     }
 
     h1, h2, h3 {
-        color: $brown;
+        color: $fore;
     }
 }
