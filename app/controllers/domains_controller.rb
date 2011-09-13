@@ -2,6 +2,8 @@ require "whois"
 require "page_rankr"
 
 class DomainsController < ApplicationController
+  include DomainsHelper
+
   def show
     begin
       @domain = Domain.find(params[:id])
@@ -119,6 +121,25 @@ class DomainsController < ApplicationController
     rescue ActiveRecord::RecordNotFound
       render :action => "410", :status => '410 Gone'
     end
+  end
+
+  def analyze
+    domain = if params[:id].to_i > 0
+               Domain.find(params[:id])
+             elsif domain_name_valid?(decode_domain_name(params[:id]))
+               Domain.create_from_list('custom', decode_domain_name(params[:id]))
+             else
+               raise 'Invalid domain name'
+             end
+
+    if domain.analyzed_at and domain.analyzed_at > 1.hour.ago
+      redirect_to domain
+    else
+      @title = "Analyzing #{domain.name}"
+      Resque.enqueue(Analyzers::AnalyzeDomain, domain.id)
+    end
+  rescue ActiveRecord::RecordNotFound
+    render :action => "410", :status => '410 Gone'
   end
 
 end

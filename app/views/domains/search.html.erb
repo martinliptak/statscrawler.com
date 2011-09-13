@@ -1,6 +1,12 @@
 <h1><%= @title%></h1>
 
 <% if @domains.any? %>
+    <% if params[:name].present? and domain_name_valid?(params[:name]) %>
+        <p>
+            Searched domain name has not been found. You can check domains beginning with '<%= params[:name] %>' or
+            <%= link_to "analyze #{params[:name]}", analyze_domain_path(encode_domain_name(params[:name])) %>.
+    <% end %>
+
     <table>
         <% for domain in @domains %>
             <tr>
@@ -16,7 +22,11 @@
     </div>
 <% else %>
     <% if params[:name].present? %>
-        <p>Domain name beginning with '<%= params[:name] %>' has not been found.<p>
+        <p>
+            No domains beginning with '<%= params[:name] %>' have been found.
+            If it is an existing domain, you can
+            <%= link_to "analyze #{params[:name]}", analyze_domain_path(encode_domain_name(params[:name])) %>.
+        <p>
     <% else %>
         <p>No domains match given criteria.<p>
     <% end %>

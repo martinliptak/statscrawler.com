@@ -17,6 +17,7 @@ class Domain < ActiveRecord::Base
     unless domain.list_domains.where(:list => list).any?
       domain.list_domains.create(:list => list)
     end
+    domain
   end
 
   def self.to_be_analyzed

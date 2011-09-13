@@ -23,7 +23,7 @@ describe Domain do
   end
   
   it "should provide analyze helper method" do
-    first = Domain.create_from_list("list", "first").domain
+    first = Domain.create_from_list("list", "first")
     
     Timecop.freeze(Time.now) {
       first.analyze { |domain|

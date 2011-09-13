@@ -247,4 +247,21 @@ $(function() {
        new Highcharts.Chart(options);
     });
 
+    if ($('#refresh-in').length)
+    {
+        setInterval('refresh();', 1000);
+    }
+
 });
+
+function refresh()
+{
+        secs = parseInt($('#refresh-in').html());
+        secs -= 1;
+
+        if (secs == 0)
+            location.reload(true);
+        else
+            $('#refresh-in').html(secs);
+
+}

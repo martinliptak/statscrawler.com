@@ -6,6 +6,7 @@ StatscrawlerCom::Application.routes.draw do
     member do
       get :whois
       get :pagerank
+      get :analyze
     end
   end
 

@@ -71,6 +71,17 @@
             <div id="map" data-markers="<%= @markers.to_json %>"></div>
         <% end %>
     <% end %>
+
+    <p>
+        Domain has been analyzed <%= time_ago_in_words(@domain.analyzed_at) %> ago.
+
+        <% if @domain.analyzed_at < 1.hour.ago %>
+            <%= link_to 'Analyze now', analyze_domain_path(@domain),:rel => :nofollow %>
+        <% end %>
+    </p>
 <% else %>
-    <p>The domain has not been analyzed yet. </p>
+    <p>
+        Domain has not been analyzed yet. <%= link_to 'Analyze now', analyze_domain_path(@domain),
+                                                          :rel => :nofollow %>
+    </p>
 <% end %>
