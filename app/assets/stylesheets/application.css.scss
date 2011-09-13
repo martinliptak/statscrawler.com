@@ -22,9 +22,13 @@ body {
             color: $brown;
             height: 75px;
 
-            h1 {
-                margin: 0;
-                font-size: 3em;
+            #logo {
+                text-decoration: none;
+
+                h1 {
+                    margin: 0;
+                    font-size: 3em;
+                }
             }
 
             #slogan {
@@ -110,11 +114,18 @@ body {
 
             #links {
                 margin-top: 20px;
+                margin-bottom: 10px;
 
-                #move-to-top {
+                .left {
+                    float: left;
+                }
+
+                .right {
                     float: right;
-                    margin-right: 10px;
-                    margin-bottom: 10px;
+
+                    a {
+                        margin-left: 10px;
+                    }
                 }
             }
         }

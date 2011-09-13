@@ -1,9 +1,13 @@
 class ListsController < ApplicationController
+  LISTS = ['sk_nic', 'cz', 'dmoz']
 
   def show
-    @domains = Domain.includes(:list_domains).where('list_domains.list' => params[:id]).analyzed
-
-    @list = params[:id] if ['sk_nic', 'cz', 'dmoz'].include? params[:id]
+    if params[:id] and LISTS.include?(params[:id])
+      @list = params[:id]
+    else
+      @list = 'dmoz'
+    end
+    @domains = Domain.includes(:list_domains).where('list_domains.list' => @list).analyzed
 
     @distribution = {}
 
@@ -45,14 +49,14 @@ class ListsController < ApplicationController
       select country, count(*) from locations
         join domains on locations.id = domains.location_id
         join list_domains on domain_id = domains.id and list = '#{@list}'
-        group by country order by count(*) desc"), :country, @domains.count / 100)
+        group by country order by count(*) desc"), :country, @domains.count / 150)
 
     @distribution[:city] = distribution(Domain.connection.execute("
       select city, count(*) from locations
         join domains on locations.id = domains.location_id
         join list_domains on domain_id = domains.id and list = '#{@list}'
         where city <> ' '
-        group by city order by count(*) desc limit 10"), :city)
+        group by city order by count(*) desc limit 12"), :city)
 
     @markers = Domain.connection.execute("
       select longitude, latitude, count(*), city from locations

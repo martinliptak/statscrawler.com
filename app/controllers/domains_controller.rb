@@ -81,7 +81,11 @@ class DomainsController < ApplicationController
       redirect_to @domains.first
     else
       if params[:name]
-        @title = "Search '#{params[:name]}' "
+        if params[:name] == ''
+          @title = 'All domains'
+        else
+          @title = "Search '#{params[:name]}' "
+        end
       else
         @title = params[:framework] || params[:feature] || params[:engine] || params[:server] || params[:doctype] || params[:ip] || params[:city] || params[:country]
         @title = @title.titleize
