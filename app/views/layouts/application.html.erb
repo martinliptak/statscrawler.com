@@ -3,9 +3,9 @@
 <head itemscope itemtype="http://schema.org/Article">
     <title><%= title %></title>
 
-    <meta name="Description" content="Which frameworks and javascript libraries
-                    are used in the Internet? Which are the most common doctypes,
-                    languages and web servers? Where are domains hosted?
+    <meta name="Description" content="What frameworks and javascript libraries
+                    are used on the Internet? What are the most common languages,
+                    web servers and doctypes? Where are those domains hosted?
                     Statscrawler works hard to find out. ">
     <meta name="Keywords" content="domains, frameworks, statistics">
 
@@ -34,9 +34,9 @@
 <body class="<%= params[:controller] %>">
     <div id="page">
         <header>
-            <div id="description">Which frameworks and javascript libraries
-                    are used in the Internet? Which are the most common doctypes,
-                    languages and web servers? Where are domains hosted?
+            <div id="description">What frameworks and javascript libraries
+                    are used on the Internet? What are the most common languages,
+                    web servers and doctypes? Where are those domains hosted?
                     Statscrawler works hard to find out. </div>
             <a href="/" id="logo">
                 <h1>Statscrawler.com</h1>
@@ -66,50 +66,54 @@
         <section id="content">
             <%= yield %>
 
-            <div id="links">
-                <div class="left">
-                    <!-- Place this tag where you want the +1 button to render -->
-                    <div class="g-plusone" data-size="medium" data-href="http://www.statscrawler.com"></div>
-                    <!-- Place this render call where appropriate -->
-                    <script type="text/javascript">
-                      (function() {
-                        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-                        po.src = 'https://apis.google.com/js/plusone.js';
-                        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-                      })();
-                    </script>
-                </div>
+            <% unless @task %>
+                <div id="links">
+                    <div class="left">
+                        <!-- Place this tag where you want the +1 button to render -->
+                        <div class="g-plusone" data-size="medium" data-href="http://www.statscrawler.com"></div>
+                        <!-- Place this render call where appropriate -->
+                        <script type="text/javascript">
+                          (function() {
+                            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                            po.src = 'https://apis.google.com/js/plusone.js';
+                            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                          })();
+                        </script>
+                    </div>
 
-                <div class="left">
-                    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.statscrawler.com" data-text="Which frameworks and javascript libraries are used in the Internet?" data-count="horizontal" data-via="martinliptak">Tweet</a>
-                    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-                </div>
+                    <div class="left">
+                        <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.statscrawler.com" data-text="Which frameworks and javascript libraries are used in the Internet?" data-count="horizontal" data-via="martinliptak">Tweet</a>
+                        <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+                    </div>
 
-                <div class="left">
-                    <div id="fb-root"></div>
-                    <script>(function(d){
-                      var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-                      js = d.createElement('script'); js.id = id; js.async = true;
-                      js.src = "//connect.facebook.net/en_US/all.js#appId=273271292691174&xfbml=1";
-                      d.getElementsByTagName('head')[0].appendChild(js);
-                    }(document));</script>
-                    <div class="fb-like" data-href="http://www.statscrawler.com" data-layout="button_count" data-width="200" data-show-faces="true" data-font="verdana"></div>
-                </div>
+                    <div class="left">
+                        <div id="fb-root"></div>
+                        <script>(function(d){
+                          var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+                          js = d.createElement('script'); js.id = id; js.async = true;
+                          js.src = "//connect.facebook.net/en_US/all.js#appId=273271292691174&xfbml=1";
+                          d.getElementsByTagName('head')[0].appendChild(js);
+                        }(document));</script>
+                        <div class="fb-like" data-href="http://www.statscrawler.com" data-layout="button_count" data-width="200" data-show-faces="true" data-font="verdana"></div>
+                    </div>
 
-                <div class="right">
-                    <%= link_to 'All domains', search_domains_path(:name => '') %>
-                    <a href="#page" id="move-to-top">Move to top &uArr;</a>
-                </div>
+                    <div class="right">
+                        <%= link_to 'All domains', search_domains_path(:name => '') %>
+                        <a href="#page" id="move-to-top">Move to top &uArr;</a>
+                    </div>
 
-                <div class="clear"></div>
-            </div>
+                    <div class="clear"></div>
+                </div>
+            <% end %>
         </section>
 
         <footer>
             <%= image_tag 'wslogo.png' %>
-            Statscrawler is maintained by <a href="http://twitter.com/martinliptak">@martinliptak</a>.
-            Any feedback is welcome. Virtual server for crawling has been provided by
-            <a href="http://www.websupport.sk">Websupport, s.r.o.</a>.
+            Statscrawler.com has been created by <a href="http://twitter.com/martinliptak">@martinliptak</a>.
+            Any feedback is welcome. If anyone is interested in framework detection methods, source code
+            of framework detection can be found on Github.
+
+            Virtual server for crawling has been provided by <a href="http://www.websupport.sk">Websupport, s.r.o.</a>.
 
         </footer>
     </div>

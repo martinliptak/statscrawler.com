@@ -5,25 +5,23 @@ class DomainsController < ApplicationController
   include DomainsHelper
 
   def show
-    begin
-      @domain = Domain.find(params[:id])
-      @title = "#{@domain.name}"
-      if @domain.location
-        domains = Domain.includes(:location).where('locations.ip' => @domain.location.ip).count
+    @domain = Domain.find(params[:id])
+    @title = "#{@domain.name}"
+    if @domain.location
+      domains = Domain.includes(:location).where('locations.ip' => @domain.location.ip).count
 
-        @markers = [{
-            :latitude => @domain.location.latitude,
-            :longitude => @domain.location.longitude,
-            :title => @domain.location.ip,
-            :icon => marker_icon(domains),
-            :html => "<b>#{@domain.location.ip}</b><br/>
-                        <a href=#{url_for(search_domains_path(:ip => @domain.location.ip))}>
-                          #{pluralize(domains, 'domain')}</a>"
-        }]
-      end
-    rescue ActiveRecord::RecordNotFound
-      render :action => "410", :status => '410 Gone'
+      @markers = [{
+          :latitude => @domain.location.latitude,
+          :longitude => @domain.location.longitude,
+          :title => @domain.location.ip,
+          :icon => marker_icon(domains),
+          :html => "<b>#{@domain.location.ip}</b><br/>
+                      <a href=#{url_for(search_domains_path(:ip => @domain.location.ip))}>
+                        #{pluralize(domains, 'domain')}</a>"
+      }]
     end
+  rescue ActiveRecord::RecordNotFound
+    render :action => "410", :status => '410 Gone'
   end
 
   def search
@@ -96,46 +94,46 @@ class DomainsController < ApplicationController
   end
 
   def whois
+    @domain = Domain.find(params[:id])
+    @title = "Whois #{@domain.name}"
+
     begin
-      @domain = Domain.find(params[:id])
-      @title = "Whois #{@domain.name}"
+      client = Whois::Client.new
 
-      begin
-        client = Whois::Client.new
-
-        @whois = client.query(@domain.name).to_s
-      rescue StandardError => err
-        logger.error "#{@domain.name}: #{err}"
-      end
-    rescue ActiveRecord::RecordNotFound
-      render :action => "410", :status => '410 Gone'
+      @whois = client.query(@domain.name).to_s
+    rescue StandardError => err
+      logger.error "#{@domain.name}: #{err}"
     end
+  rescue ActiveRecord::RecordNotFound
+    render :action => "410", :status => '410 Gone'
   end
 
   def pagerank
-    begin
-      @domain = Domain.find(params[:id])
-      @title = "Pagerank #{@domain.name}"
+    @domain = Domain.find(params[:id])
+    @title = "Pagerank #{@domain.name}"
 
-      @pagerank = PageRankr.ranks(@domain.name, :alexa_us, :alexa_global, :compete, :google)
-    rescue ActiveRecord::RecordNotFound
-      render :action => "410", :status => '410 Gone'
-    end
+    @pagerank = PageRankr.ranks(@domain.name, :alexa_us, :alexa_global, :compete, :google)
+  rescue ActiveRecord::RecordNotFound
+    render :action => "410", :status => '410 Gone'
   end
 
   def analyze
-    domain = if params[:id].to_i > 0
-               Domain.find(params[:id])
-             elsif domain_name_valid?(decode_domain_name(params[:id]))
-               Domain.create_from_list('custom', decode_domain_name(params[:id]))
-             else
-               raise 'Invalid domain name'
-             end
+    name = decode_domain_name(params[:id])
+    domain = Domain.find_by_name(name)
+    unless domain
+      if domain_name_valid?(decode_domain_name(name))
+        domain = Domain.create_from_list('custom', name)
+      else
+        raise 'Invalid domain name'
+      end
+    end
 
     if domain.analyzed_at and domain.analyzed_at > 1.hour.ago
       redirect_to domain
     else
       @title = "Analyzing #{domain.name}"
+      @task = true
+
       Resque.enqueue(Analyzers::AnalyzeDomain, domain.id)
     end
   rescue ActiveRecord::RecordNotFound

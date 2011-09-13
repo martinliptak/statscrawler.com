@@ -5,6 +5,14 @@ class Domain < ActiveRecord::Base
 
   before_destroy :destroy_orphaned_pages
   before_destroy :destroy_orphaned_locations
+
+  def to_param
+    name.gsub('.', '_')
+  end
+
+  def self.find(name)
+    find_by_name(name.gsub('_', '.'))
+  end
   
   def analyze
     yield(self)
