@@ -15,7 +15,7 @@ module Analyzers
       analyze(Domain.find(domain_id), 0)
     end
 
-    def self.daemon(thread_count = 100)
+    def self.daemon(thread_count = 50)
 
       if thread_count > 0
         Thread.abort_on_exception = true
