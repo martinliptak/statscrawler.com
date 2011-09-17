@@ -1,12 +1,17 @@
 require 'spec_helper'
 
 require 'resolv'
-def Resolv.getaddress(name)
-  case name
-    when 'statistiky-domen.sk', 'statistiky-domen-redirect.sk'
-      '195.210.28.80'
-    when 'statistiky-domen-second.sk'
-      '195.210.28.81'
+Resolv::DNS.class_eval do
+  def getaddress(name)
+    case name
+      when 'statistiky-domen.sk', 'statistiky-domen-redirect.sk'
+        '195.210.28.80'
+      when 'statistiky-domen-second.sk'
+        '195.210.28.81'
+    end
+  end
+  
+  def getresources(name, typename)
   end
 end
 

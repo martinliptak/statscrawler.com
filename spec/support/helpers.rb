@@ -8,7 +8,7 @@ module Helpers
               end
     body = File.read(File.dirname(__FILE__) + "/../models/fixtures/matcher/#{fixture}.html")
 
-    matcher = Analyzers::Matcher.new
-    matcher.match(headers, body)
+    matcher = Analyzers::Matcher.new(headers, body)
+    matcher.match
   end
 end

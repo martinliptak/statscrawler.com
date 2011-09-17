@@ -4,12 +4,11 @@ module Analyzers
   class AnalyzeDomain
     @queue = 'analyzer'
 
-    GEO_IP = GeoIP.new("vendor/GeoLiteCity.dat")
+    @geoip = GeoIP.new("vendor/GeoLiteCity.dat")
+    @dns = Resolv::DNS.new
 
     DOWNLOAD_TIMEOUT = 10
-    MASK_ERRORS = ["OpenURI::HTTPError", "Timeout::Error", "RuntimeError", "SocketError",
-                   "Errno::EHOSTUNREACH", "Errno::ECONNRESET", "Errno::ECONNREFUSED", "Errno::ETIMEDOUT",
-                   "EOFError"]
+    MASK_ERRORS = []
 
     def self.perform(domain_id)
       analyze(Domain.find(domain_id), 0)
@@ -32,10 +31,14 @@ module Analyzers
         }
 
         while true
-          Domain.to_be_analyzed.find_each { |record|
-            queue << record
-          }
-
+          begin
+            Domain.to_be_analyzed.find_each { |record|
+              queue << record
+            }
+          rescue NoMethodError
+            retry
+          end
+          
           sleep 5
         end
       else
@@ -48,10 +51,12 @@ module Analyzers
     def self.analyze(domain, id = 0)
       domain.analyze { |domain|
         begin
-          analyze_page(domain)
           analyze_location(domain)
+          analyze_page(domain)
 
           Rails.logger.info "#{id}: #{domain.name}"
+        rescue NoMethodError
+          retry
         rescue StandardError => err
           if MASK_ERRORS.include?(err.class.name)
             Rails.logger.info "#{id}: #{domain.name} => #{err.message}"
@@ -72,14 +77,14 @@ module Analyzers
 
         [url, body, headers, true]
       else
-        open(domain.url,
-             :read_timeout => DOWNLOAD_TIMEOUT,
-             :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) { |file|
-          url = file.base_uri.to_s
-          headers = file.meta
-          body = file.read
+        timeout(DOWNLOAD_TIMEOUT) { 
+          open(domain.url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) { |file|
+            url = file.base_uri.to_s
+            headers = file.meta
+            body = file.read
 
-          return [url, body, headers, false]
+            return [url, body, headers, false]
+          }
         }
       end
     end
@@ -99,8 +104,8 @@ module Analyzers
         domain.page.source.body = body
       end
 
-      matcher = Matcher.new
-      result = matcher.match(headers, body)
+      matcher = Matcher.new(headers, body)
+      result = matcher.match
       domain.page.description = result[:description]
       domain.page.keywords = result[:keywords]
       domain.page.server = result[:server]
@@ -115,25 +120,26 @@ module Analyzers
     end
 
     def self.analyze_location(domain)
-      ip = Resolv.getaddress(domain.name)
-      Resolv::DNS.open do |dns|
-        ress = dns.getresources domain.name, Resolv::DNS::Resource::IN::AAAA
-        domain.ipv6 = (ress.present? and ress.any?)
-      end
+      ip = @dns.getaddress(domain.name).to_s
+      
+      ress = @dns.getresources domain.name, Resolv::DNS::Resource::IN::AAAA
+      domain.ipv6 = (ress.present? and ress.any?)
 
-      begin
-        domain.create_location(:ip => ip)
-      rescue ActiveRecord::RecordNotUnique
-        domain.location = Location.find_by_ip(ip)
-      end
+      if ip
+        begin
+          domain.create_location(:ip => ip)
+        rescue ActiveRecord::RecordNotUnique
+          domain.location = Location.find_by_ip(ip)
+        end
 
-      g = GEO_IP.city(ip)
-      domain.location.country = g.country_name
-      domain.location.city = g.city_name
-      domain.location.city = "Praha" if domain.location.city == "Prague"
-      domain.location.longitude = g.longitude
-      domain.location.latitude = g.latitude
-      domain.location.save
+        g = @geoip.city(ip)
+        domain.location.country = g.country_name
+        domain.location.city = g.city_name
+        domain.location.city = "Praha" if domain.location.city == "Prague"
+        domain.location.longitude = g.longitude
+        domain.location.latitude = g.latitude
+        domain.location.save
+      end
     end
   end
 end

@@ -1,11 +1,14 @@
 module Analyzers
   class Matcher
-    def match(headers, body)
+    def initialize(headers, body)
       @headers = headers
-      @data = body
+      @data = body.strip
       @result = { :features => [] }
+    end
+  
+    def match
       @document = Nokogiri::HTML(@data)
-
+      
       description = @document.css("meta[name=description], meta[name=Description]").first
       @result[:description] = description['content'] if description
 
@@ -85,17 +88,17 @@ module Analyzers
       end
 
       # doctype
-      regexp /^\s*(<\?xml[^?]+\?>)?\s*<!doctype\s*(html\s*public\s*".[^"]*"|html)/i do |match|
+      regexp /^(<\?xml[^?]+\?>)?\s{0,10}<!doctype\s{0,10}(html\s{0,10}public\s{0,10}".[^"]{0,1000}"|html)/i do |match|
         doctype match[2].delete("\n\r").strip.squeeze(" ").downcase
       end
 
       # powered by opencart
-      regexp /<!--[^>]*Powered By OpenCart/ do
+      regexp /<!--[^>]{0,1000}Powered By OpenCart/ do
         framework :opencart
       end
 
       # google adsense
-      regexp /<!--\s*google_ad_section_start/ do
+      regexp /<!--\s{0,100}google_ad_section_start/ do
         feature :google_adsense
       end
 
