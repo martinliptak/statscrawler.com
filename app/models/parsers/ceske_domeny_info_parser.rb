@@ -3,7 +3,7 @@ require 'open-uri'
 module Parsers
   class CeskeDomenyInfoParser < BaseParser
 
-    @queue = 'parser'
+    @queue = 'low'
     def self.perform
       for letter in (1..9).to_a + ('A'..'Z').to_a
         for page in (1..10_000)

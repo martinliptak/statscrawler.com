@@ -3,7 +3,7 @@ module Parsers
 
     DMOZ_DUMP_URL='http://rdf.dmoz.org/rdf/content.rdf.u8.gz'
 
-    @queue = 'parser'
+    @queue = 'low'
     def self.perform
       Rails.logger.info "#{Time.now} Importing from DMOZ dump"
       open(DMOZ_DUMP_URL) { |file|

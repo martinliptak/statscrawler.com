@@ -1,4 +1,0 @@
-#!/bin/bash
-
-nohup rake stats:daemon RAILS_ENV=production > /rails/statscrawler.com/log/daemon.out 2>&1 &
-

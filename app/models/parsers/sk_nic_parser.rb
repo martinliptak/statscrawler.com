@@ -5,7 +5,7 @@ module Parsers
 
     SK_NIC_LIST_URL = "https://www.sk-nic.sk/documents/domeny_1.txt.gz"
 
-    @queue = 'parser'
+    @queue = 'low'
     def self.perform
       Rails.logger.info "#{Time.now} Downloading SK-NIC domains"
       open(SK_NIC_LIST_URL, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) { |file|

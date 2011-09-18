@@ -15,23 +15,27 @@ Resolv::DNS.class_eval do
   end
 end
 
-describe Analyzers::AnalyzeDomain do
+describe Analyzers::AnalyzeAllDomains do
 
     it "should download and analyze domain" do
       FakeWeb.register_uri(:get, "http://www.statistiky-domen.sk",
                            :body => '<html><head><script src="jquery.js"></script><script src="prototype.js"></script></head></html>',
                            :server => :nginx)
+      FakeWeb.register_uri(:get, "http://www.statistiky-domen-second.sk",
+                           :body => '<html><head><script src="jquery.js"></script></head>second</html>',
+                           :server => :apache)
 
       Domain.create(:name => 'statistiky-domen.sk')
+      Domain.create(:name => 'statistiky-domen-second.sk')
 
       Timecop.freeze(Time.now) {
-        Analyzers::AnalyzeDomain.perform(Domain.first)
+        Analyzers::AnalyzeAllDomains.perform(0)
 
-        Domain.count.should == 1
-        Page.count.should == 1
-        Source.count.should == 1
-        Feature.count.should == 2
-        Location.count.should == 1
+        Domain.count.should == 2
+        Page.count.should == 2
+        Source.count.should == 2
+        Feature.count.should == 3
+        Location.count.should == 2
 
         domain = Domain.first
         domain.page.should == Page.first
@@ -42,6 +46,21 @@ describe Analyzers::AnalyzeDomain do
         domain.page.features.count.should == 2
         domain.location.should == Location.first
         domain.location.ip.should == '195.210.28.80'
+        domain.location.country.should == 'Slovakia'
+        domain.location.city.should be_kind_of String
+        domain.location.longitude.should be_kind_of Numeric
+        domain.location.latitude.should be_kind_of Numeric
+        domain.analyzed_at.should == Time.now.to_s
+
+        domain = Domain.last
+        domain.page.should == Page.last
+        domain.page.source.should == Source.last
+        domain.page.source.headers.should_not be_nil
+        domain.page.source.body.should == '<html><head><script src="jquery.js"></script></head>second</html>'
+        domain.page.server.should == 'apache'
+        domain.page.features.count.should == 1
+        domain.location.should == Location.last
+        domain.location.ip.should == '195.210.28.81'
         domain.location.country.should == 'Slovakia'
         domain.location.city.should be_kind_of String
         domain.location.longitude.should be_kind_of Numeric
@@ -59,7 +78,7 @@ describe Analyzers::AnalyzeDomain do
 
       Domain.create(:name => 'statistiky-domen.sk')
       Timecop.freeze(Time.now) {
-        Analyzers::AnalyzeDomain.perform(Domain.last)
+        Analyzers::AnalyzeAllDomains.perform(0)
 
         Domain.count.should == 1
         Page.count.should == 1
@@ -85,7 +104,7 @@ describe Analyzers::AnalyzeDomain do
 
       Domain.create(:name => 'statistiky-domen-redirect.sk')
       Timecop.freeze(Time.now) {
-        Analyzers::AnalyzeDomain.perform(Domain.last)
+        Analyzers::AnalyzeAllDomains.perform(0)
 
         Domain.count.should == 2
         Page.count.should == 1
@@ -116,11 +135,13 @@ describe Analyzers::AnalyzeDomain do
       Domain.create(:name => 'statistiky-domen.sk')
 
       Timecop.freeze(Time.now) {
-        Analyzers::AnalyzeDomain.perform(Domain.last)
+        Analyzers::AnalyzeAllDomains.perform(0)
       }
 
       Timecop.freeze(Time.now) {
-        Analyzers::AnalyzeDomain.perform(Domain.last)
+        Domain.first.update_attributes(:analyzed_at => nil)
+        Domain.first.page.source.delete
+        Analyzers::AnalyzeAllDomains.perform(0)
 
         Domain.count.should == 1
         Page.count.should == 1
