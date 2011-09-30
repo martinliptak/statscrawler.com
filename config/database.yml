@@ -35,7 +35,7 @@ production:
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  database: statscrawler.com_development
+  database: statscrawler.com_production
   pool: 51
   username: root
   password:

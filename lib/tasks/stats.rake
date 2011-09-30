@@ -2,13 +2,17 @@ namespace :stats do
     task :common => :environment do
         Rails.logger = Logger.new(STDOUT)
         
-        # ActiveRecord::Base.logger = Logger.new(STDOUT)
-        # ActiveRecord::Base.logger.level = 0
+        #ActiveRecord::Base.logger = Logger.new(STDOUT)
+        #ActiveRecord::Base.logger.level = 0
     end
 
     namespace :analyzers do
       task :all => :common do
           Resque::enqueue(Analyzers::AnalyzeAllDomains)
+      end
+      
+      task :all_now => :common do
+          Analyzers::AnalyzeAllDomains.perform
       end
     end
     

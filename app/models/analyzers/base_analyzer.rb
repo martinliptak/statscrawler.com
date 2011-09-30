@@ -49,7 +49,7 @@ module Analyzers
 
     def self.analyze_page(domain)
       url, body, headers, cached = download(domain)
-                                        GEO_IP
+
       begin
         domain.create_page(:url => url)
       rescue ActiveRecord::RecordNotUnique
