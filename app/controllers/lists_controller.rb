@@ -63,7 +63,7 @@ class ListsController < ApplicationController
         join domains on locations.id = domains.location_id
         join list_domains on domain_id = domains.id and list = '#{@list}'
         where longitude is not null and latitude is not null and city <> ' '
-        group by longitude, latitude").map { |marker|
+        group by longitude, latitude order by count(*) desc limit 1000").map { |marker|
       {
         :latitude => marker[1],
         :longitude => marker[0],

@@ -3,7 +3,7 @@ module Analyzers
     GEO_IP = GeoIP.new(Rails.root.join("vendor/GeoLiteCity.dat"))
     DNS = Resolv::DNS.new
 
-    DOWNLOAD_TIMEOUT = 10
+    DOWNLOAD_TIMEOUT = 60
     MASK_ERRORS = []
 
     def self.analyze(domain, id = 0)
@@ -13,7 +13,8 @@ module Analyzers
           analyze_page(domain)
 
           Rails.logger.info "#{id}: #{domain.name}"
-        rescue NoMethodError
+        rescue NoMethodError => err
+          Rails.logger.warn "#{id}: #{domain.name} => #{err.message} (#{err.class})"
           retry
         rescue StandardError => err
           if MASK_ERRORS.include?(err.class.name)
@@ -91,12 +92,14 @@ module Analyzers
         end
 
         g = GEO_IP.city(ip)
-        domain.location.country = g.country_name
-        domain.location.city = g.city_name
-        domain.location.city = "Praha" if domain.location.city == "Prague"
-        domain.location.longitude = g.longitude
-        domain.location.latitude = g.latitude
-        domain.location.save
+        if g
+            domain.location.country = g.country_name
+            domain.location.city = g.city_name
+            domain.location.city = "Praha" if domain.location.city == "Prague"
+            domain.location.longitude = g.longitude
+            domain.location.latitude = g.latitude
+            domain.location.save
+        end
       end
     end
   end

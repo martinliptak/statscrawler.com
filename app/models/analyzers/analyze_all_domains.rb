@@ -3,7 +3,7 @@ module Analyzers
   class AnalyzeAllDomains < AnalyzeDomain
     @queue = 'low'
 
-    def self.perform(thread_count = 50)
+    def self.perform(thread_count = 63)
       if thread_count > 0
         Thread.abort_on_exception = true
 
