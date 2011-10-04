@@ -3,25 +3,28 @@ module Analyzers
     GEO_IP = GeoIP.new(Rails.root.join("vendor/GeoLiteCity.dat"))
     DNS = Resolv::DNS.new
 
-    DOWNLOAD_TIMEOUT = 60
-    MASK_ERRORS = []
+    DOWNLOAD_TIMEOUT = 30
 
     def self.analyze(domain, id = 0)
       domain.analyze { |domain|
+        attempts = 0
         begin
+          attempts += 1
+          
           analyze_location(domain)
           analyze_page(domain)
 
           Rails.logger.info "#{id}: #{domain.name}"
         rescue NoMethodError => err
           Rails.logger.warn "#{id}: #{domain.name} => #{err.message} (#{err.class})"
-          retry
-        rescue StandardError => err
-          if MASK_ERRORS.include?(err.class.name)
-            Rails.logger.info "#{id}: #{domain.name} => #{err.message}"
+          
+          if attempts < 5
+            retry 
           else
-            Rails.logger.warn "#{id}: #{domain.name} => #{err.message} (#{err.class})"
+            raise err
           end
+        rescue StandardError => err
+          Rails.logger.warn "#{id}: #{domain.name} => #{err.message} (#{err.class})"
         end
       }
     end

@@ -3,7 +3,7 @@ module Analyzers
   class AnalyzeAllDomains < AnalyzeDomain
     @queue = 'low'
 
-    def self.perform(thread_count = 63)
+    def self.perform(thread_count = 95)
       if thread_count > 0
         Thread.abort_on_exception = true
 
@@ -25,6 +25,8 @@ module Analyzers
         rescue NoMethodError
           retry
         end
+        
+        sleep 60
       else
         Domain.to_be_analyzed.find_each { |record|
           analyze(record)
