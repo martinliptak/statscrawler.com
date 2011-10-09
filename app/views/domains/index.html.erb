@@ -1,11 +1,15 @@
-<p><%= number_with_delimiter @domains.analyzed.count %> domains have been analyzed in this list. </p>
+<p><%= number_with_delimiter @domains.analyzed.count %>
+   <%= params[:tld].downcase %>
+   domains
+   <%= "(#{@tld.join(', ')})" if @tld.kind_of? Array %>
+   have been analyzed. </p>
 
 <%= render "shared/column", :title => "Frameworks",
                :data => @distribution[:framework],
                :tooltip => "'<b>'+ addSpaces(this.y) + '</b> domains are powered by <b>'+ this.x +'</b>. '",
                :x_title => "Framework", :y_title => "Domains",
                :description => 'There are many ways to detect a framework.
-                    For example some add X-Powered-By HTTP header, some set unique cookie name or
+                    For example some frameworks add X-Powered-By HTTP header, some set unique cookie name or
                     provide HTTP generator meta tag. Often the only reliable way
                     is the directory structure of stylesheets, javascripts or images.
                     Unique names of HTML element classes can also be used.
@@ -22,7 +26,7 @@
 <%= render "shared/pie", :title => "Servers",
                :data => @distribution[:server],
                :total => @domains.count,
-               :description => 'Detected from Server header, although it is often hidden for security reasons.' %>
+               :description => 'Detected from Server header, although this header is often hidden for security reasons.' %>
 
 <%= render "shared/pie", :title => "Languages",
                :data => @distribution[:engine],
@@ -55,6 +59,4 @@
 
 <article class="block" >
     <div id="map" data-markers="<%= @markers.to_json %>"></div>
-
-    <p>Zoom in to country level to see the smallest hosting centers. </p>
 </article>

@@ -4,7 +4,7 @@ module ApplicationHelper
     @title ? "#{@title} | Statscrawler.com" : "Statscrawler.com"
   end
 
-  def list(title, list)
-    "<li class=\"right #{list == @list ? "active" : ""}\">#{link_to title, list_path(list)}</li>".html_safe
+  def item(title, tld)
+    "<li class=\"right #{params[:tld] == tld ? "active" : ""}\">#{link_to title, root_path(:tld => tld)}</li>".html_safe
   end
 end

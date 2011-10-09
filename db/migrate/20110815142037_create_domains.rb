@@ -2,6 +2,7 @@ class CreateDomains < ActiveRecord::Migration
   def change
     create_table :domains do |t|
       t.string     :name
+      t.string     :tld
       t.references :page
       t.references :location
       t.boolean    :ipv6

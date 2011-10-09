@@ -8,17 +8,13 @@ describe Parsers::SkNicParser do
     Parsers::SkNicParser.perform
     
     Domain.count.should == 62
-    ListDomain.count.should == 62
     
     first = Domain.first
     first.name.should == '0-0.sk'
+    first.tld.should == 'sk'
     first.page_id.should be_nil 
     first.location_id.should be_nil 
-    first.analyzed_at.should be_nil 
-    
-    first = ListDomain.first
-    first.list.should == 'sk_nic'
-    first.domain.should == Domain.first
+    first.analyzed_at.should be_nil
   end
   
   it "should destroy domains removed from list" do
@@ -33,17 +29,12 @@ describe Parsers::SkNicParser do
     Parsers::SkNicParser.perform
     
     Domain.count.should == 55
-    ListDomain.count.should == 55
     
     first = Domain.first
     first.name.should == '001.sk'
     first.page_id.should be_nil 
     first.location_id.should be_nil 
-    first.analyzed_at.should be_nil 
-    
-    first = ListDomain.first
-    first.list.should == 'sk_nic'
-    first.domain.should == Domain.first
+    first.analyzed_at.should be_nil
     
     Domain.find_by_name(last.name).should == last
   end

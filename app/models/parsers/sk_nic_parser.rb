@@ -33,18 +33,16 @@ module Parsers
         }
         
         Rails.logger.info "#{Time.now} Destroying SK-NIC domains"
-        ListDomain.find_by_sql("SELECT l.* FROM list_domains l 
-                                JOIN domains d ON d.id = l.domain_id AND l.list = 'sk_nic'
-                                WHERE NOT EXISTS (SELECT * FROM temp_domains t WHERE t.name = d.name)").each { |list_domain|
-          list_domain.destroy
+        Domain.find_by_sql("SELECT * FROM domains d
+                                WHERE tld = 'sk' AND NOT EXISTS (SELECT * FROM temp_domains t WHERE t.name = d.name)").each { |domain|
+          domain.destroy
         }
         
         Rails.logger.info "#{Time.now} Adding SK-NIC domains"
-        ActiveRecord::Base.connection.execute("SELECT name FROM temp_domains t 
+        Domain.connection.execute("SELECT name FROM temp_domains t
                                                WHERE NOT EXISTS (SELECT * FROM domains d 
-                                                                 JOIN list_domains l ON d.id = l.domain_id AND l.list = 'sk_nic'
                                                                  WHERE d.name = t.name)").each { |result|
-          Domain.create_from_list('sk_nic', result[0])
+          Domain.create(:name => result[0])
         }
         
         ActiveRecord::Base.connection.execute("DROP TEMPORARY TABLE temp_domains")

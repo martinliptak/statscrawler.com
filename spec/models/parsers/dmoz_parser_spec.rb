@@ -15,9 +15,5 @@ describe Parsers::DmozParser do
     first.page_id.should be_nil
     first.location_id.should be_nil
     first.analyzed_at.should be_nil
-
-    first = ListDomain.first
-    first.list.should == 'dmoz'
-    first.domain.should == Domain.first
   end
 end

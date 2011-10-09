@@ -2,28 +2,28 @@ require 'spec_helper'
 
 describe Domain do
 
-  it "should create domain from list" do
-    Domain.create_from_list("list", "first")
-    Domain.count.should == 1
-    ListDomain.count.should == 1
-    
+  it "should set tld from domain name before save" do
+    Domain.create(:name => "example.org")
+
     first = Domain.first
-    first.name.should == 'first'
+    first.name.should == 'example.org'
+    first.tld.should == 'org'
     first.page.should be_blank
     first.location.should be_blank
     first.analyzed_at.should be_blank
-    
-    Domain.create_from_list("list", "second")
+
+    Domain.create(:name => "example.co.uk")
     Domain.count.should == 2
-    ListDomain.count.should == 2
-    
-    Domain.create_from_list("list2", "second")
-    Domain.count.should == 2
-    ListDomain.count.should == 3
+    last = Domain.last
+    last.name.should == 'example.co.uk'
+    last.tld.should == 'uk'
+    last.page.should be_blank
+    last.location.should be_blank
+    last.analyzed_at.should be_blank
   end
   
   it "should provide analyze helper method" do
-    first = Domain.create_from_list("list", "first")
+    first = Domain.create(:name => "first")
     
     Timecop.freeze(Time.now) {
       first.analyze { |domain|

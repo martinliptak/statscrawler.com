@@ -33,16 +33,18 @@
 </head>
 <body class="<%= params[:controller] %>">
     <div id="page">
-        <header>
-            <div id="description">What frameworks and javascript libraries
-                    are used on the Internet? What are the most common languages,
-                    web servers and doctypes? Where are those domains hosted?
-                    Statscrawler works hard to find out. </div>
-            <a href="/" id="logo">
-                <h1>Statscrawler.com</h1>
-            </a>
-            <div id="slogan">Analyzed <%= number_with_delimiter(Domain.analyzed.count) %> domains and analyzing more...</div>
-        </header>
+        <%= cache :expires_in => 1.hour do %>
+          <header>
+              <div id="description">What frameworks and javascript libraries
+                      are used on the Internet? What are the most common languages,
+                      web servers and doctypes? Where are those domains hosted?
+                      Statscrawler works hard to find out. </div>
+              <a href="/" id="logo">
+                  <h1>Statscrawler.com</h1>
+              </a>
+              <div id="slogan">Analyzed <%= number_with_delimiter(Domain.analyzed.count) %> domains and analyzing more...</div>
+          </header>
+        <% end %>
 
         <section id="bar">
            <div id="analyze">
@@ -56,9 +58,9 @@
 
             <nav>
                 <ul>
-                    <%= list 'DMOZ domains', 'dmoz' %>
-                    <%= list 'Slovak domains', 'sk_nic' %>
-                    <%= list 'Czech domains', 'cz' %>
+                    <% for tld in COUNTRIES.keys %>
+                        <%= item tld.titleize, tld %>
+                    <% end %>
                 </ul>
             </nav>
         </section>
@@ -98,6 +100,7 @@
                     </div>
 
                     <div class="right">
+                        <%= link_to 'All countries', countries_domains_path %>
                         <%= link_to 'All domains', search_domains_path(:name => '') %>
                         <a href="#page" id="move-to-top">Move to top &uArr;</a>
                     </div>
@@ -108,10 +111,10 @@
         </section>
 
         <footer>
-            <%= link_to image_tag('wslogo.png'), 'http://www.websupport.sk' %>
-            Statscrawler has been created by <a href="http://twitter.com/martinliptak">@martinliptak</a>.
-            Any feedback is welcome. If you are interested in how framework detection works, check out
-            <a href="https://github.com/martinliptak/statscrawler-matcher">Github</a>.
+            <%= link_to image_tag('/images/wslogo.png'), 'http://www.websupport.sk' %>
+            Stats were collected in September 2011 by <a href="http://twitter.com/martinliptak">@martinliptak</a>.
+            Any feedback will be highly appreciated. If you are interested in how our framework detection works, 
+            check out <a href="https://github.com/martinliptak/statscrawler-matcher">Github</a>.
             Virtual server for crawling has been provided by <a href="http://www.websupport.sk">Websupport</a>.
         </footer>
     </div>

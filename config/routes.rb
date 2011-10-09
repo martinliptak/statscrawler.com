@@ -1,7 +1,9 @@
 StatscrawlerCom::Application.routes.draw do
-  resources :lists
   resources :domains do
-    get :search, :on => :collection
+    collection do
+      get :search
+      get :countries
+    end
 
     member do
       get :whois
@@ -10,5 +12,5 @@ StatscrawlerCom::Application.routes.draw do
     end
   end
 
-  root :to => 'lists#show#dmoz'
+  root :to => 'domains#index'
 end

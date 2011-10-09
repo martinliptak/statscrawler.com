@@ -10,7 +10,7 @@ module Parsers
         gz = Zlib::GzipReader.new(file)
         gz.each_line { |line|
           if line =~ %r{http://([^/]*)}
-            Domain.create_from_list('dmoz', $1)
+            Domain.find_or_create_by_name($1)
           end
         }
         gz.close
