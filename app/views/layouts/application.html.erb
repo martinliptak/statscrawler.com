@@ -47,7 +47,7 @@
 </head>
 <body class="<%= params[:controller] %>">
     <div id="page">
-        <%= cache :expires_in => 1.hour do %>
+        <%= cache('layout_header') do %>
           <header>
               <div id="description">What frameworks and javascript libraries
                       are used on the Internet? What are the most common languages,
