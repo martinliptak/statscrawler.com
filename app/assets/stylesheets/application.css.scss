@@ -11,7 +11,8 @@ $fore: #3d3d3d;
 $fore_bold: #323232;
 
 body {
-    font-family: verdana;
+    font-family: Verdana;
+    font-size: 15px;
     color: $fore;
 
     #page {
@@ -22,7 +23,7 @@ body {
             padding: 10px 25px;
             background: $back;
             color: $fore;
-            height: 75px;
+            height: 90px;
 
             #logo {
                 text-decoration: none;
@@ -53,6 +54,9 @@ body {
 
             background: $back;
             color: $fore;
+            
+            float: none;
+            clear: both;
 
             #analyze {
                 float: right;
@@ -79,7 +83,7 @@ body {
                         float: left;
                         display: block;
                         margin-top: 10px;
-                        padding: 10px 15px 0 15px;
+                        padding: 10px 10px 0 10px;
                         height: 30px;
 
                         a {

@@ -199,7 +199,7 @@ class DomainsController < ApplicationController
     domain = Domain.find_by_name(name)
     unless domain
       if domain_name_valid?(decode_domain_name(name))
-        domain = Domain.create_from_list('custom', name)
+        domain = Domain.create(:name => name)
       else
         raise 'Invalid domain name'
       end
