@@ -1,7 +1,7 @@
 module Analyzers
   class BaseAnalyzer
     GEO_IP = GeoIP.new(Rails.root.join("vendor/GeoLiteCity.dat"))
-    DNS = Resolv::DNS.new(:nameserver => '8.8.8.8')
+    DNS = Resolv::DNS.new
 
     DOWNLOAD_TIMEOUT = 30
 
