@@ -1,11 +1,14 @@
 module Analyzers
   class BaseAnalyzer
     GEO_IP = GeoIP.new(Rails.root.join("vendor/GeoLiteCity.dat"))
-    DNS = Resolv::DNS.new
+    DNS = Resolv::DNS.new(:nameserver => '8.8.8.8')
 
     DOWNLOAD_TIMEOUT = 30
 
     def self.analyze(domain, id = 0)
+      ActiveRecord::Base.logger = Logger.new(STDOUT)
+      ActiveRecord::Base.logger.level = 0
+    
       domain.analyze { |domain|
         attempts = 0
         begin
@@ -39,6 +42,7 @@ module Analyzers
 
         [url, body, headers, true]
       else
+        Rails.logger.info "#{Time.now}: Downloading"
         timeout(DOWNLOAD_TIMEOUT) {
           open(domain.url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) { |file|
             url = file.base_uri.to_s
@@ -54,6 +58,7 @@ module Analyzers
     def self.analyze_page(domain)
       url, body, headers, cached = download(domain)
 
+      Rails.logger.info "#{Time.now}: Creating page"
       begin
         domain.create_page(:url => url)
       rescue ActiveRecord::RecordNotUnique
@@ -66,6 +71,7 @@ module Analyzers
         domain.page.source.body = body
       end
 
+      Rails.logger.info "#{Time.now}: Matching"
       matcher = Matcher.new(headers, body)
       result = matcher.match
       domain.page.description = result[:description]
@@ -78,22 +84,24 @@ module Analyzers
       for feature in result[:features]
         domain.page.features.build :name => feature
       end
+      
+      Rails.logger.info "#{Time.now}: Saving"
       domain.page.save
     end
 
     def self.analyze_location(domain)
+      Rails.logger.info "#{Time.now}: Resolving"
       ip = DNS.getaddress(domain.name).to_s
 
+      Rails.logger.info "#{Time.now}: Resolving IPv6"
       ress = DNS.getresources domain.name, Resolv::DNS::Resource::IN::AAAA
       domain.ipv6 = (ress.present? and ress.any?)
 
       if ip
-        begin
-          domain.create_location(:ip => ip)
-        rescue ActiveRecord::RecordNotUnique
-          domain.location = Location.find_by_ip(ip)
-        end
+        Rails.logger.info "#{Time.now}: Creating location"
+        domain.location = Location.find_or_create_by_ip(ip)
 
+        Rails.logger.info "#{Time.now}: Geoiping"
         g = GEO_IP.city(ip)
         if g
             domain.location.country = g.country_name
@@ -101,6 +109,8 @@ module Analyzers
             domain.location.city = "Praha" if domain.location.city == "Prague"
             domain.location.longitude = g.longitude
             domain.location.latitude = g.latitude
+            
+            Rails.logger.info "#{Time.now}: Saving location"
             domain.location.save
         end
       end
