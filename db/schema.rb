@@ -11,10 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110816182407) do
+ActiveRecord::Schema.define(:version => 20110816165437) do
 
   create_table "domains", :force => true do |t|
     t.string   "name"
+    t.string   "tld"
     t.integer  "page_id"
     t.integer  "location_id"
     t.boolean  "ipv6"
@@ -31,13 +32,6 @@ ActiveRecord::Schema.define(:version => 20110816182407) do
   end
 
   add_index "features", ["page_id", "name"], :name => "index_features_on_page_id_and_name"
-
-  create_table "list_domains", :force => true do |t|
-    t.string  "list"
-    t.integer "domain_id"
-  end
-
-  add_index "list_domains", ["domain_id"], :name => "index_list_domains_on_domain_id"
 
   create_table "locations", :force => true do |t|
     t.string "ip"
