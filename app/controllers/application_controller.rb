@@ -38,4 +38,9 @@ class ApplicationController < ActionController::Base
           }
      end
   end
+
+  def search_enabled?
+    false
+  end
+  helper_method :search_enabled?
 end

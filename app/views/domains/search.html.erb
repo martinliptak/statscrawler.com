@@ -1,33 +1,37 @@
 <h1><%= @title%></h1>
 
-<% if @domains.any? %>
-    <% if params[:name].present? and domain_name_valid?(params[:name]) %>
-        <p>
-            Searched domain name has not been found. You can check domains beginning with '<%= params[:name] %>' or
-            <%= link_to "analyze #{params[:name]}", analyze_domain_path(encode_domain_name(params[:name])) %>.
-    <% end %>
-
-    <table>
-        <% for domain in @domains %>
-            <tr>
-              <td><%= link_to domain.name, domain %></td>
-              <td><%= link_to 'Go to site &raquo;'.html_safe, domain.url, :rel => :nofollow, :class => :external %>
-            </tr>
+<% if search_enabled? %>
+    <% if @domains.any? %>
+        <% if params[:name].present? and domain_name_valid?(params[:name]) %>
+            <p>
+                Searched domain name has not been found. You can check domains beginning with '<%= params[:name] %>' or
+                <%= link_to "analyze #{params[:name]}", analyze_domain_path(encode_domain_name(params[:name])) %>.
         <% end %>
-    </table>
 
-    <div id="pagination">
-        <span class="count">Found <%= number_with_delimiter @domains.total_count, :delimiter => ' ' %> domains</span>
-        <%= paginate @domains %>
-    </div>
-<% else %>
-    <% if params[:name].present? %>
-        <p>
-            No domains beginning with '<%= params[:name] %>' have been found.
-            If it is an existing domain, you can
-            <%= link_to "analyze #{params[:name]}", analyze_domain_path(encode_domain_name(params[:name])) %>.
-        <p>
+        <table>
+            <% for domain in @domains %>
+                <tr>
+                  <td><%= link_to domain.name, domain %></td>
+                  <td><%= link_to 'Go to site &raquo;'.html_safe, domain.url, :rel => :nofollow, :class => :external %>
+                </tr>
+            <% end %>
+        </table>
+
+        <div id="pagination">
+            <span class="count">Found <%= number_with_delimiter @domains.total_count, :delimiter => ' ' %> domains</span>
+            <%= paginate @domains %>
+        </div>
     <% else %>
-        <p>No domains match given criteria.<p>
+        <% if params[:name].present? %>
+            <p>
+                No domains beginning with '<%= params[:name] %>' have been found.
+                If it is an existing domain, you can
+                <%= link_to "analyze #{params[:name]}", analyze_domain_path(encode_domain_name(params[:name])) %>.
+            <p>
+        <% else %>
+            <p>No domains match given criteria.<p>
+        <% end %>
     <% end %>
+<% else %>
+    <p>Searching has been causing us some performance issues recently. That's why we have disabled it. If you are really interested in this feature and have a great use of it, write us on Twitter :)</p>
 <% end %>

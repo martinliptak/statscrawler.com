@@ -1,87 +1,91 @@
 <h1><%= @title %></h1>
 
-<div class="tools">
-  <div><%= link_to "Show whois", whois_domain_path(@domain), :rel => :nofollow %></div>
-  <div><%= link_to "Show pagerank", pagerank_domain_path(@domain), :rel => :nofollow %></div>
+<% if search_enabled? %>
+    <div class="tools">
+      <div><%= link_to "Show whois", whois_domain_path(@domain), :rel => :nofollow %></div>
+      <div><%= link_to "Show pagerank", pagerank_domain_path(@domain), :rel => :nofollow %></div>
 
-  <div style="margin-top: 10px;">
-    <%= link_to "Go to #{@domain.name} &raquo;".html_safe,
-                @domain.url, :rel => :nofollow, :class => :external %>
-  </div>
-</div>
+      <div style="margin-top: 10px;">
+        <%= link_to "Go to #{@domain.name} &raquo;".html_safe,
+                    @domain.url, :rel => :nofollow, :class => :external %>
+      </div>
+    </div>
 
-<% if @domain.analyzed_at? %>
-    <%if @domain.ipv6 %>
-        <div class="box">
-          <b>This domain has an AAAA DNS record.</b> <br>
-          AAAA DNS records contain IPv6 addresses. Domain is probably ready for IPv6.
-        </div>
-    <% end %>
-
-    <% if @domain.page %>
-        <h2>Site</h2>
-
-        <table>
-          <tr><th>Description</th><td><%= @domain.page.description %></td></tr>
-          <tr><th>Keywords</th><td><%= @domain.page.keywords %></td></tr>
-          <tr><th>Server</th><td><%= @domain.page.server? ?
-                                             link_to(@domain.page.server, search_domains_path(:server => @domain.page.server))
-                                     : "Undetected" %></td></tr>
-          <tr><th>Language</th><td><%= @domain.page.engine? ?
-                                               link_to(@domain.page.engine, search_domains_path(:engine => @domain.page.engine))
-                                       : "Undetected" %></td></tr>
-          <tr><th>Doctype</th><td><%= @domain.page.doctype? ?
-                                              link_to(@domain.page.doctype, search_domains_path(:doctype => @domain.page.doctype))
-                                      : "Undetected" %></td></tr>
-          <tr><th>Framework</th><td><%= @domain.page.framework? ?
-                                                link_to(@domain.page.framework, search_domains_path(:framework => @domain.page.framework))
-                                        : "Undetected" %></td></tr>
-          <tr><th>Features</th><td><%= raw(@domain.page.features.collect { |feature|
-              link_to(feature.name, search_domains_path(:feature => feature.name))
-          }.join(", ")) %></td></tr>
-        </table>
-
-        <% if @domain.page.domains.to_a.count > 1 %>
+    <% if @domain.analyzed_at? %>
+        <%if @domain.ipv6 %>
             <div class="box">
-                More domains redirect to <%= @domain.page.url %>: <br>
-                <%= raw(@domain.page.domains.to_a.collect { |domain|
-                    link_to(domain.name, domain)
-                }.join(', ')) %>
+              <b>This domain has an AAAA DNS record.</b> <br>
+              AAAA DNS records contain IPv6 addresses. Domain is probably ready for IPv6.
             </div>
         <% end %>
-    <% end %>
 
-    <% if @domain.location %>
-        <h2>Location</h2>
+        <% if @domain.page %>
+            <h2>Site</h2>
 
-        <table>
-          <tr><th>IP</th><td>
-            <%= link_to @domain.location.ip, search_domains_path(:ip => @domain.location.ip) %></td></tr>
-          <tr><th>Country</th><td>
-            <%= @domain.location.country != ""  ?
-                        link_to(@domain.location.country, search_domains_path(:country => @domain.location.country))
-                : "Unknown" %></td></tr>
-          <tr><th>City</th><td>
-            <%= @domain.location.city != ""  ?
-                        link_to(@domain.location.city, search_domains_path(:city => @domain.location.city))
-                : "Unknown" %></td></tr>
-        </table>
+            <table>
+              <tr><th>Description</th><td><%= @domain.page.description %></td></tr>
+              <tr><th>Keywords</th><td><%= @domain.page.keywords %></td></tr>
+              <tr><th>Server</th><td><%= @domain.page.server? ?
+                                                 link_to(@domain.page.server, search_domains_path(:server => @domain.page.server))
+                                         : "Undetected" %></td></tr>
+              <tr><th>Language</th><td><%= @domain.page.engine? ?
+                                                   link_to(@domain.page.engine, search_domains_path(:engine => @domain.page.engine))
+                                           : "Undetected" %></td></tr>
+              <tr><th>Doctype</th><td><%= @domain.page.doctype? ?
+                                                  link_to(@domain.page.doctype, search_domains_path(:doctype => @domain.page.doctype))
+                                          : "Undetected" %></td></tr>
+              <tr><th>Framework</th><td><%= @domain.page.framework? ?
+                                                    link_to(@domain.page.framework, search_domains_path(:framework => @domain.page.framework))
+                                            : "Undetected" %></td></tr>
+              <tr><th>Features</th><td><%= raw(@domain.page.features.collect { |feature|
+                  link_to(feature.name, search_domains_path(:feature => feature.name))
+              }.join(", ")) %></td></tr>
+            </table>
 
-        <% if @markers %>
-            <div id="map" data-markers="<%= @markers.to_json %>"></div>
+            <% if @domain.page.domains.to_a.count > 1 %>
+                <div class="box">
+                    More domains redirect to <%= @domain.page.url %>: <br>
+                    <%= raw(@domain.page.domains.to_a.collect { |domain|
+                        link_to(domain.name, domain)
+                    }.join(', ')) %>
+                </div>
+            <% end %>
         <% end %>
-    <% end %>
 
-    <div class="box">
-        Domain has been analyzed <%= time_ago_in_words(@domain.analyzed_at) %> ago.
+        <% if @domain.location %>
+            <h2>Location</h2>
 
-        <% if @domain.analyzed_at < 1.hour.ago %>
-            <%= link_to 'Analyze now', analyze_domain_path(@domain),:rel => :nofollow %>
+            <table>
+              <tr><th>IP</th><td>
+                <%= link_to @domain.location.ip, search_domains_path(:ip => @domain.location.ip) %></td></tr>
+              <tr><th>Country</th><td>
+                <%= @domain.location.country != ""  ?
+                            link_to(@domain.location.country, search_domains_path(:country => @domain.location.country))
+                    : "Unknown" %></td></tr>
+              <tr><th>City</th><td>
+                <%= @domain.location.city != ""  ?
+                            link_to(@domain.location.city, search_domains_path(:city => @domain.location.city))
+                    : "Unknown" %></td></tr>
+            </table>
+
+            <% if @markers %>
+                <div id="map" data-markers="<%= @markers.to_json %>"></div>
+            <% end %>
         <% end %>
-    </div>
+
+        <div class="box">
+            Domain has been analyzed <%= time_ago_in_words(@domain.analyzed_at) %> ago.
+
+            <% if @domain.analyzed_at < 1.hour.ago %>
+                <%= link_to 'Analyze now', analyze_domain_path(@domain),:rel => :nofollow %>
+            <% end %>
+        </div>
+    <% else %>
+        <p>
+            Domain has not been analyzed yet. <%= link_to 'Analyze now', analyze_domain_path(@domain),
+                                                              :rel => :nofollow %>
+        </p>
+    <% end %>
 <% else %>
-    <p>
-        Domain has not been analyzed yet. <%= link_to 'Analyze now', analyze_domain_path(@domain),
-                                                          :rel => :nofollow %>
-    </p>
+    <p><p>Performance issues again :) We are sorry.</p></p>
 <% end %>
